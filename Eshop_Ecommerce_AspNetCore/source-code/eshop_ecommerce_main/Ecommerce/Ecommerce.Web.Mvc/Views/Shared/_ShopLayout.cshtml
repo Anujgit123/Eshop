@@ -1,0 +1,182 @@
+﻿@{
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+    BasicSeoConfigurationDto conBSeo = JsonSerializer.Deserialize<BasicSeoConfigurationDto>(K["BasicSeoConfiguration"]);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="@conBSeo.SeoDescription" />
+    <meta name="keywords" content="@conBSeo.SeoKeywords">
+    <link rel="icon" type="image/png" href="/@conGen.CompanyFavicon" />
+    @*<title>@ViewData["Title"] - @conGen.CompanyName</title>*@
+    <title>@(ViewData["SeoTitle"] == null ? $"{ViewData["Title"]} - {conGen.CompanyName} | {conGen.CompanySlogan}" : ViewData["SeoTitle"])</title>
+    @*<meta name="robots" content="noindex, nofollow">*@
+    <vc:styles></vc:styles>
+    <partial name="_ShopStyles" />
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .moretext {
+            display: none;
+        }
+
+        .moreless-button-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    @*<div class="bs-canvas bs-canvas-left position-fixed bg-light h-100">
+        <header class="bs-canvas-header p-3 bg-success">
+        <h4 class="d-inline-block text-light mb-0">Left Panel</h4>
+        <button type="button" class="bs-canvas-close close" aria-label="Close"><span aria-hidden="true" class="text-light"><i class="fa fa-times"></i></span></button>
+        </header>
+        <div class="bs-canvas-content px-3 py-5">
+        <h2>Left</h2>
+        </div>
+        </div>*@
+@*<div class="su-preloader">
+    <div class="spinner"></div>
+    <span id="loading-msg"></span>
+</div>*@
+    <div class="bs-canvas bs-canvas-right position-fixed bg-light h-100 cart-summary-preview" style="font-size: 0.87em;">
+        <vc:cart-summary></vc:cart-summary>
+    </div>
+
+    <div class="body_wrap">
+        <!-- backtotop - start -->
+        <div class="backtotop">
+            <a href="#" class="scroll">
+                <i class="far fa-arrow-up"></i>
+            </a>
+        </div>
+        <!-- backtotop - end -->
+        <!-- preloader - start -->
+        <div id="preloader"></div>
+        <!-- preloader - end -->
+        <!-- header_section - start
+        ================================================== -->
+        <partial name="_ShopHeader" />
+        <!-- header_section - end
+        ================================================== -->
+        <main class="main">
+            <!-- sidebar cart - start
+            ================================================== -->
+            <div class="sidebar-menu-wrapper">
+                <div class="cart_sidebar">
+                    <button type="button" class="close_btn"><i class="fal fa-times"></i></button>
+                    <div class="cart-summary-preview">
+                        <vc:cart-summary></vc:cart-summary>
+                    </div>
+                </div>
+                <div class="cart_overlay"></div>
+            </div>
+
+            <!-- sidebar cart - end
+            ================================================== -->
+            <!-- product quick view modal - start
+            ================================================== -->
+            <div id="quickview">
+            </div>
+            <!-- product quick view modal - end
+            ================================================== -->
+            @RenderBody()
+
+            <!-- newsletter_section - start
+            ================================================== -->
+            <section class="newsletter_section">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h2 class="newsletter_title text-white">@conGen.CompanyName</h2>
+                            <p>@conGen.CompanySlogan</p>
+
+                            @*<h2 class="newsletter_title text-white">Sign Up for Newsletter </h2>
+                            <p>Get E-mail updates about our latest products and special offers.</p>*@
+                        </div>
+                        @*<div class="col col-lg-6">
+                            <form action="#!">
+                                <div class="newsletter_form">
+                                    <input type="email" name="email" placeholder="Enter your email address">
+                                    <button type="submit" class="btn btn_secondary">Submit</button>
+                                </div>
+                            </form>
+                        </div>*@
+                    </div>
+                </div>
+            </section>
+            <!-- newsletter_section - end
+            ================================================== -->
+        </main>
+
+        <!-- footer_section - start
+        ================================================== -->
+        <partial name="_ShopFooter" />
+        <!-- footer_section - end
+        ================================================== -->
+    </div>
+
+    <script>
+        function funct(inputfunc) {
+           try {
+               console.log('trying');
+               inputfunc();
+            }
+            catch (e) {
+                console.log('catch');
+               return true;
+            }
+        }
+
+    </script>
+    <partial name="_ShopScripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+    @if (TempData["notification"] != null)
+    {
+        @Html.Raw(TempData["notification"])
+    }
+
+    <script>
+        $(function () {
+            $("#stack-menu").stackMenu({
+                all: false,
+            });
+        });
+
+        $('.moreless-button').click(function () {
+            $('.moretext').slideToggle();
+            if ($('.moreless-button').html() == '<span>Show More</span><i class="fa fa-plus"></i>') {
+                $(this).html('<span>Show Less</span><i class="fa fa-minus"></i>')
+            } else {
+                $(this).html('<span>Show More</span><i class="fa fa-plus"></i>')
+            }
+        });
+
+        //$('#stack-menu ul li').each(function (i, ul) {
+        //    var li_amount = $(ul).find('li').length;
+        //    console.log("li_amount: " + li_amount);
+        //});
+
+        $("#stack-menu > ul > li").each(function () {
+            var count = $(this).index();
+            //console.log(count);
+            if (count > 6) {
+                $(this).addClass('moretext');
+                $('.moreless-button').removeClass('moreless-button-hidden');
+            }
+            else {
+                $(this).removeClass('moretext');
+                $('.moreless-button').addClass('moreless-button-hidden');
+            }
+            $('.moreless-button-li').removeClass('moretext');
+        });
+    </script>
+
+
+
+
+</body>
+</html>

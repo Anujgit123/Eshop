@@ -1,0 +1,363 @@
+﻿@model ProductForEditDto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@section Styles{
+<link href="~/media/css/media-select.css" rel="stylesheet" />
+<style>
+    .mw-50-c {
+        max-width: 60px;
+    }
+
+    .mw-100-c {
+        max-width: 100px;
+    }
+</style>
+}
+
+
+<div class="page-title-box">
+    <h4 class="page-title">Product</h4>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="card-title">Product Details</div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="ProductId" hidden />
+                    <div class="mb-3">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ShortDescription" class="control-label">Short Description</label>
+                        <textarea asp-for="ShortDescription" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="control-label">Category</label>
+                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                            <option value="">------</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="VariableTheme" class="control-label">Variable Theme</label>
+                        <select asp-for="VariableTheme" class="form-select" asp-items="ViewBag.VariableTheme">
+                            <option value="">None</option>
+                        </select>
+                        <span asp-validation-for="VariableTheme" class="text-danger"></span>
+                    </div>
+                    <label class="control-label">Product Image</label>
+                    <div class="mb-3">
+                        <div su-media-section>
+                            <img class="img-fluid mb-1" su-media-preview src="@(Model.ProductImagePreview != null? "/" + Model.ProductImagePreview : "/media/images/no-image.png")" alt="Product picture">
+                            <div class="btn-group btn-group-xs" role="group" aria-label="Basic outlined example">
+                                <button type="button" class="btn btn-soft-primary" su-media-popup>Select</button>
+                                <button type="button" class="btn btn-soft-danger" su-media-deselect>×</button>
+                            </div>
+                            <input su-media-selected-input type="text" asp-for="@Model.ProductImage" hidden>
+                        </div>
+                    </div>
+                    @*<button type="submit" class="btn btn-primary">Save</button>*@
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="card-title">Product Variable</div>
+    </div>
+    <div class="card-body">
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tblProductVariant">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Images</th>
+                                <th>Size</th>
+                                <th>Color</th>
+                                <th>Sku</th>
+                                <th class="mw-100-c">In-Stock</th>
+                                <th class="mw-100-c">Unit Price</th>
+                                <th class="mw-50-c"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.ProductVarient != null)
+                            {
+                                foreach (var item in Model.ProductVarient)
+                                {
+                                    <tr>
+                                        <td><input type="text" asp-for="@item.Title" name="Title" class="form-control" /></td>
+                                        <td>
+                                            <div su-media-section>
+                                                <img class="img-fluid mb-1" su-media-preview src="@(item.VarientImagePreview != null? "/" + item.VarientImagePreview : "/media/images/no-image.png")" alt="Product picture">
+                                                <div class="btn-group btn-group-xs" role="group" aria-label="Basic outlined example">
+                                                    <button type="button" class="btn btn-soft-primary" su-media-popup>Select</button>
+                                                    <button type="button" class="btn btn-soft-danger" su-media-deselect>×</button>
+                                                </div>
+                                                <input su-media-selected-input type="text" asp-for="@item.VarientImageId" name="VarientImageId" hidden>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select asp-for="@item.SizeId" class="form-select" asp-items="ViewBag.SizeId" name="SizeId">
+                                                <option value="">------</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select asp-for="@item.ColorId" class="form-select" asp-items="ViewBag.ColorId" name="ColorId">
+                                                <option value="">------</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" asp-for="@item.Sku" name="Sku" class="form-control" /></td>
+                                        <td class="mw-100-c"><input type="number" asp-for="@item.Quantity" name="Quantity" class="form-control" disabled readonly /></td>
+                                        <td class="mw-100-c"><input type="text" asp-for="@item.Price" name="Price" class="form-control" /></td>
+                                        <td class="mw-100-c" hidden><input type="text" asp-for="@item.Id" name="Id" class="form-control" /></td>
+                                        <td class="mw-50-c"><a href="javascript:void(0)" class="btn btn-soft-secondary btn-sm remove"><i class="fa fa-trash-alt"></i></a></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td><input type="text" asp-for="@Model.Name" name="Title" class="form-control" /></td>
+                                    <td>
+                                        <div su-media-section>
+                                            <img class="img-fluid mb-1" su-media-preview src="/media/images/no-image.png" alt="Product picture">
+                                            <div class="btn-group btn-group-xs" role="group" aria-label="Basic outlined example">
+                                                <button type="button" class="btn btn-soft-primary" su-media-popup>Select</button>
+                                                <button type="button" class="btn btn-soft-danger" su-media-deselect>×</button>
+                                            </div>
+                                            <input su-media-selected-input type="text" name="VarientImageId" hidden>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-select" asp-items="ViewBag.SizeId" name="SizeId">
+                                            <option value="">------</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select" asp-items="ViewBag.ColorId" name="ColorId">
+                                            <option value="">------</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="Sku" class="form-control" /></td>
+                                    <td class="mw-100-c"><input value="0" min="0" type="number" name="Quantity" class="form-control" /></td>
+                                    <td class="mw-100-c"><input type="text" name="Price" class="form-control" /></td>
+                                    <td class="mw-100-c" hidden><input type="text" name="Id" class="form-control" /></td>
+                                    <td class="mw-50-c"><a href="javascript:void(0)" class="btn btn-soft-secondary btn-sm remove"><i class="fa fa-trash-alt"></i></a></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8"><a href="javascript:void(0)" id="AddAnotherVariant" class="btn btn-soft-primary"><i class="fa fa-plus"></i> Add new variant</a></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="float-right">
+                    <button class="btn btn-success" id="saveVarient">Save Variable</button>
+                </div>
+                <div class="my-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fa fa-reply"></i> Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image select modal -->
+<vc:image></vc:image>
+
+@section Scripts{
+<script src="~/media/js/media-select.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#Description').summernote();
+        //getSize();
+        //getColor();
+    });
+
+    $(document).on('click', '#AddAnotherVariant', function () {
+        console.log('Hello');
+        var sizeOption = getSize();
+        var colorOption = getColor();
+        var addtr = `<tr>
+                            <td><input type="text" name="Title" class="form-control" /></td>
+                            <td>
+                                <div su-media-section>
+                                    <img class="img-fluid mb-1" su-media-preview src="/media/images/no-image.png" alt="Product picture">
+                                    <div class="btn-group btn-group-xs" role="group" aria-label="Basic outlined example">
+                                        <button type="button" class="btn btn-soft-primary" su-media-popup>Select</button>
+                                        <button type="button" class="btn btn-soft-danger" su-media-deselect>×</button>
+                                    </div>
+                                    <input su-media-selected-input type="text" name="VarientImageId" hidden>
+                                </div>
+                            </td>
+                            <td><select name="SizeId" class="form-select SizeId">`+ sizeOption + `</select></td>
+                            <td><select name="ColorId" class="form-select ColorId">`+ colorOption + `</select></td>
+                            <td><input type="text" name="Sku" class="form-control" /></td>
+                            <td class="mw-100-c"><input type="number" value="0" min="0" name="Quantity" class="form-control" /></td>
+                            <td class="mw-100-c"><input type="text" name="Price" class="form-control" /></td>
+                            <td class="mw-100-c" hidden><input type="text" name="Id" class="form-control" /></td>
+                            <td class="mw-50-c"><a href="javascript:void(0)" class="btn btn-soft-secondary btn-sm remove"><i class="fa fa-trash-alt"></i></a></td>
+                        </tr>`;
+
+
+        $("#tblProductVariant tbody").append(addtr);
+    });
+
+    //$("#AddAnotherVariant").click(function () {
+
+    //});
+
+    $('table').on('click', 'tr a.remove', function (e) {
+        e.preventDefault();
+        swal({
+            title: "Delete Confirm?",
+            text: "Are you wanted to delete this item?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            reverseButtons: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $(this).closest('tr').remove();
+            } else {
+                //swal("Your file is safe!");
+            }
+        });
+        
+    });
+
+    function getSize() {
+        var response;
+        $.ajax({
+            url: "/Product/GetSize",
+            type: 'GET',
+            async: false,
+            dataType: 'json', // added data type
+            success: function (result) {
+                var options = '<option value="">------</option>';
+
+                $.each(result, function () {
+                    options += '<option value="' + this.value + '">' + this.text + '</option>';
+                });
+                response = options;
+            },
+            error: function (e) {
+                alert("Error!" + e);
+            }
+        });
+        return response;
+    }
+
+    function getColor() {
+        var response;
+        $.ajax({
+            url: "/Product/GetColor",
+            type: 'GET',
+            async: false,
+            dataType: 'json', // added data type
+            success: function (result) {
+                var options = '<option value="">------</option>';
+
+                $.each(result, function () {
+                    options += '<option value="' + this.value + '">' + this.text + '</option>';
+                });
+                response = options;
+
+            },
+            error: function (e) {
+                alert("Error!" + e);
+            }
+        });
+        return response;
+    }
+
+    //Collect data
+    $("#saveVarient").click(function (e) {
+        e.preventDefault();
+
+        var proArr = [];
+        proArr.length = 0;
+
+        $.each($("#tblProductVariant tbody tr"), function () {
+            proArr.push({
+                Title: $(this).find('td:eq(0)').find('input[name=Title]').val(),
+                VarientImageId: $(this).find('td:eq(1)').find('input[name=VarientImageId]').val(),
+                SizeId: $(this).find('td:eq(2)').find('select[name=SizeId]').val(),
+                ColorId: $(this).find('td:eq(3)').find('select[name=ColorId]').val(),
+                Sku: $(this).find('td:eq(4)').find('input[name=Sku]').val(),
+                Quantity: $(this).find('td:eq(5)').find('input[name=Quantity]').val(),
+                Price: $(this).find('td:eq(6)').find('input[name=Price]').val(),
+                Id: $(this).find('td:eq(7)').find('input[name=Id]').val(),
+            });
+        });
+
+
+        var data = JSON.stringify({
+            ProductId: $("#ProductId").val(),
+            Name: $("#Name").val(),
+            ShortDescription: $("#ShortDescription").val(),
+            Description: $("#Description").val(),
+            VariableTheme: $("#VariableTheme").val(),
+            CategoryId: $("#CategoryId").val(),
+            ProductImage: $("#ProductImage").val(),
+            ProductVarient: proArr
+        });
+
+
+
+        $.when(saveVarient(data)).then(function (response) {
+            //if success
+            console.log(response);
+            notifier.open({ type: "success", message: "Product Updated" });
+            //alertify.message('Product Updated');
+        }).fail(function (err) {
+            console.log(err);
+            notifier.open({ type: "error", message: err });
+        });
+    });
+
+    function saveVarient(data) {
+        console.log(data);
+        var obj = jQuery.parseJSON(data);
+        return $.ajax({
+            url: "/Product/UpdateProduct",
+            type: 'POST',
+            data: obj,
+            success: function (result) {
+                console.log(result);
+                //location.reload();
+            },
+            error: function () {
+                alert("Error!")
+            }
+        });
+    }
+
+
+</script>
+}

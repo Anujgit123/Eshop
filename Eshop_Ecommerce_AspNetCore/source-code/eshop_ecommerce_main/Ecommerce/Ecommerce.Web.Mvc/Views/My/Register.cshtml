@@ -1,0 +1,94 @@
+﻿@model CustomerRegisterDto
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = LayoutPage.ShopLayout;
+}
+
+@section Styles{
+    <style>
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"], .checkout-section .nice-select,
+        textarea, .text-area {
+            width: 100%;
+            border-radius: 0px;
+            border: none;
+            min-height: 50px;
+            padding: .4rem 1rem;
+            background: #F5F5F7;
+        }
+    </style>
+}
+
+
+    <!-- register_section - start
+    ================================================== -->
+    <section class="register_section section_space">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 col-md-8">
+                    <div class="text-center">
+                        <h2 class="mb-0">Register</h2>
+                        <p>Create new account if you don't have any.</p>
+                    </div>
+                    <div class="register_wrap">
+                        <form class="row" asp-controller="My" asp-action="Register" method="post">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserName" class="form-label">Username</label>
+                                <input type="text" class="form-control" asp-for="UserName">
+                                <span asp-validation-for="UserName"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" asp-for="Email">
+                                <span asp-validation-for="Email"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" asp-for="FirstName">
+                                <span asp-validation-for="FirstName"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" asp-for="LastName">
+                                <span asp-validation-for="LastName"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password">Password</label>
+                                <input class="form-control password-input" asp-for="Password" autocomplete="new-password">
+                                <span asp-validation-for="Password"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmPassword">Confirm Password</label>
+                                <input class="form-control password-input" asp-for="ConfirmPassword">
+                                <span asp-validation-for="ConfirmPassword"></span>
+                            </div>
+                            @*<div class="col-12 mb-3">
+                        <label>Address</label>
+                        <textarea rows="5"></textarea>
+                        <span></span>
+                        </div>*@
+                            <div class="col-12 mb-2">
+                                <button type="submit" class="btn btn-secondary">Register</button>
+                            </div>
+                            <div class="col-12">
+                                <span class="d-block">Already have an Account? <a asp-controller="My" asp-action="Login" class="fw-bold">Login Now</a></span>
+                            </div>
+                            <div>
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- register_section - end
+    ================================================== -->
+    @section Scripts{
+    <script>
+
+    </script>
+}

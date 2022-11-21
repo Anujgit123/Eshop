@@ -1,0 +1,12 @@
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\bin\Release\net5.0\Ecommerce.Domain.deps.json
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\bin\Release\net5.0\Ecommerce.Domain.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\bin\Release\net5.0\Ecommerce.Domain.pdb
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.csproj.AssemblyReference.cache
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.AssemblyInfoInputs.cache
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.AssemblyInfo.cs
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.csproj.CoreCompileInputs.cache
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\refint\Ecommerce.Domain.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\Ecommerce.Domain.pdb
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Domain\obj\Release\net5.0\ref\Ecommerce.Domain.dll

@@ -1,0 +1,114 @@
+﻿@{
+    ViewData["Title"] = "Cancelled Order";
+    Layout = LayoutPage.AdminLayout;
+}
+
+
+<div class="page-title-box">
+    <h4 class="page-title">Cancelled Order</h4>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="tblOrder" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th class="all">Invoice No.</th>
+                        <th>Order by</th>
+                        <th>Customer Name</th>
+                        <th>Customer Address</th>
+                        <th>Order Amount</th>
+                        <th>Delivery Charge</th>
+                        <th>Current Status</th>
+                        <th class="all"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts{
+<script type="text/javascript">
+    $(function () {
+
+            suTable = $('#tblOrder').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "responsive": true,
+                "autoWidth": false,
+                "ajax": $.fn.dataTable.pipeline({
+                    url: '@Url.Action("CancelledRenderView")',
+                    pages: 5, //number of pages to cache
+                    method: 'POST' // Ajax HTTP method
+                }),
+                "order": [[0, "desc"]],
+                "columnDefs": [
+                    { "targets": [0], "visible": false, "searchable": false },
+                    { "targets": [8], "searchable": false, "orderable": false, "className": "text-end user-action" }
+                ],
+                "columns": [
+                    { "data": "id", "name": "Id" },
+                    { "data": "invoiceNo", "name": "InvoiceNo" },
+                    { "data": "userId", "name": "UserId" },
+                    { "data": "customerName", "name": "CustomerName" },
+                    { "data": "customerAddress", "name": "CustomerAddress" },
+                    {
+                        "data": "orderAmount", "name": "OrderAmount",
+                        "render": function (data) {
+                            return $.number(data, 2);
+                        }
+                    },
+                    {
+                        "data": "deliveryCharge", "name": "DeliveryCharge",
+                        "render": function (data) {
+                            return $.number(data, 2);
+                        }
+                    },
+                    {
+                        "data": null,
+                        "name": "CurrentOrderStatus",
+                        "render": function (data, type, row) {
+                            return '<span class="badge badge-soft-danger badge-md">'+row.currentOrderStatus+'</span>';
+                        }
+                    },
+                    {
+                        'data': null,
+                        'render': function (data, type, row) {
+                            var myHtml = '';
+                            @{
+                                if(AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_Order_Edit).Result.Succeeded)
+                                {
+                                    <text>
+                                        myHtml += '<a class="btn btn-soft-primary btn-sm m-1" onclick="editClick(' + row.id + ')" href="@Url.Action("Details")/' + row.id + '"><i class="fa fa-search"></i></a>';
+                                    </text>
+                                }
+                                //if(AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_Order_Delete).Result.Succeeded)
+                                //{
+                                //    <text>
+                                //        myHtml += '<a class="btn btn-soft-danger btn-sm m-1" su-delete su-data-id="' + row.id + '" su-data-action="@Url.Action("Delete")"  href="javascript:void(0)"><i class="fa fa-trash-alt"></i></a>';
+                                //    </text>
+                                //}
+                            }
+
+                            return myHtml;
+                        }
+                    }
+                ]
+            });
+        });
+
+
+
+
+
+
+</script>
+}

@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = LayoutPage.ShopLayout;
+}
+
+@section Styles{
+    <style>
+        .product-area.latest-product .grid {
+            width: calc(25% - 30px);
+        }
+
+        @@media (max-width: 991px) {
+            .product-area.latest-product .grid {
+                width: calc(33.33% - 15px);
+                margin: 0 7.5px 15px;
+            }
+        }
+
+        @@media (max-width: 767px) {
+            .product-area.latest-product .grid {
+                width: calc(50% - 15px);
+                margin: 0 7.5px 15px;
+                padding: 25px 15px;
+            }
+        }
+
+        @@media (max-width: 500px) {
+            .product-area.latest-product .grid {
+                width: calc(100% - 15px);
+                float: none;
+                margin: 0 7.5px 15px;
+                padding: 25px 15px;
+            }
+        }
+
+        .main_slider {
+            position: relative;
+            margin: 32px 0 0 0;
+        }
+    </style>
+}
+
+
+<!-- slider_section - start
+            ================================================== -->
+<section class="slider_section">
+    <div class="">
+        <div class="row">
+            <div class="col">
+                <vc:home-slider></vc:home-slider>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- slider_section - end
+================================================== -->
+<!-- products-with-sidebar-section - start
+================================================== -->
+<section class="products-with-sidebar-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="best-selling-products">
+                    <vc:new-arrival></vc:new-arrival>
+                </div>
+
+                <div class="best-selling-products">
+                    <vc:featured-product></vc:featured-product>
+                </div>
+
+                <div class="top_category_wrap">
+                    <vc:top-categories></vc:top-categories>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end container  -->
+</section>
+<!-- products-with-sidebar-section - end
+================================================== -->
+
+
+
+
+@section Scripts{
+    <script>
+
+    </script>
+}

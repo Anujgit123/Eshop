@@ -1,0 +1,533 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    var dashboardItems = ViewBag.DashboardItems as DashboardDto;
+}
+
+<div class="page-title-box">
+    <h4 class="page-title">Dashboard</h4>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center">
+                    <div class="col">
+                        <p class="text-dark mb-0 fw-semibold">Pending Orders</p>
+                        <h3 class="my-1 font-25 fw-bold text-danger">@dashboardItems?.PendingOrderCount</h3>
+                        <p class="mb-0 text-truncate text-muted"><a class="btn btn-link p-0 text-start fw-bold" asp-controller="Order" asp-action="Pending">View &amp; Manage</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--end col-->
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center">
+                    <div class="col">
+                        <p class="text-dark mb-0 fw-semibold">New Orders</p>
+                        <h3 class="my-1 font-25 fw-bold text-info">@dashboardItems?.TodaySalesSummary.TotalSales</h3>
+                        <p class="mb-0 text-truncate text-muted"><a class="btn btn-link p-0 text-start fw-bold" asp-controller="Order" asp-action="Index">Total in Today</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--end col-->
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center">
+                    <div class="col">
+                        <p class="text-dark mb-0 fw-semibold">Customer</p>
+                        <h3 class="my-1 font-25 fw-bold text-success">@dashboardItems?.CustomerInfo.TotalCustomer<span class="font-12 text-dark ms-1 fw-normal">(Today <span class="fw-bold font-15">@dashboardItems.CustomerInfo.TotalCustomerToday</span>)</span></h3>
+                        <p class="mb-0 text-truncate text-muted"><a class="btn btn-link p-0 text-start fw-bold" asp-controller="Customer" asp-action="Index">View &amp; Manage</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--end col-->
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center">
+                    <div class="col">
+                        <p class="text-dark mb-0 fw-semibold">Stock Low</p>
+                        <h3 class="my-1 font-25 fw-bold text-primary">@dashboardItems?.LowStockItemCount</h3>
+                        <p class="mb-0 text-truncate text-muted"><a class="btn btn-link p-0 text-start fw-bold" asp-controller="Stock" asp-action="LowStockProduct">View &amp; Restock</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--end col-->
+    @*<p>@(KeyVault.Get<GeneralConfiguration>("GeneralConfiguration").CurrencySymbol)</p>*@
+
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="text-center">
+                    <div class="card-title">
+                        <span>Today's Summary</span>
+                        (<span>@DateTime.Now.ToString("dd MMMM yyyy")</span>)
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="mb-3">
+                            <p class="mb-0">Total Product</p>
+                            <h2 class="mb-0">@dashboardItems.TodaySalesSummary.TotalProduct</h2>
+                            <small>Type of product</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="mb-3">
+                            <p class="mb-0">Total Items</p>
+                            <h2 class="mb-0">@dashboardItems.TodaySalesSummary.TotalItem</h2>
+                            <small>Item quantity</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="mb-3">
+                            <p class="mb-0">Total Sales</p>
+                            <h2 class="mb-0">@dashboardItems.TodaySalesSummary.TotalSalesAmount</h2>
+                            <small>Without delivery charge</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="mb-3">
+                            <p class="mb-0">Total DeliveryCharge</p>
+                            <h2 class="mb-0">@dashboardItems.TodaySalesSummary.TotalDeliveryCharge</h2>
+                            <small>Shipping & Handling</small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-title">Live data</div>
+                    <div class="d-inline">
+                        <!--<small>Filter by: </small>-->
+                        <select class="form-select form-select-sm">
+                            <option value="1">day</option>
+                            <option value="2">hour</option>
+                            <option value="3">minute</option>
+                            <option value="4">second</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <canvas id="lineLiveChart" style="max-height: 250px; width: 100%"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-title">Weekly todaySales(Count)</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div>
+                    @*<canvas id="barChart" style="max-height: 400px; width: 100%"></canvas>*@
+                    <canvas id="weeklySalesChart" style="max-height: 400px; width: 100%"></canvas>
+                </div>
+            </div>
+        </div>
+    </div> <!--end col-->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-title">Weekly todaySales(Amount)</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <canvas id="weeklySalesAmountChart" style="max-height: 400px; width: 100%"></canvas>
+                </div>
+            </div>
+        </div>
+    </div> <!--end col-->
+</div>
+
+
+@section Scripts{
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var labels5 = [];
+    var dataset5 = [];
+    var productCount = [];
+
+    var data5 = {
+          labels: labels5,
+          datasets: [{
+            label: 'Quantity',
+            data: dataset5,
+            //maxBarThickness: 30,
+            backgroundColor: [
+              '#eb7a8577',
+            ],
+            borderColor: [
+              '#eb7a85',
+            ],
+            borderWidth: 0
+          },
+          {
+            label: 'Products',
+            data: productCount,
+            //maxBarThickness: 30,
+            backgroundColor: [
+              '#0073b177',
+            ],
+            borderColor: [
+              '#0073b1',
+            ],
+            borderWidth: 0
+          }]
+        };
+
+        var config5 = {
+          type: 'bar',
+          data: data5,
+          responsive:true,
+          maintainAspectRatio: false,
+          options: {
+            categoryPercentage: 0.8, // notice here 
+            barPercentage: 0.95,  // notice here
+            scales: {
+              x: {
+                grid: {
+                  display: false
+                }
+              },
+              y: {
+                beginAtZero: true,
+                //grid: {
+                //  display: false
+                //}
+              }
+            }
+          },
+        };
+
+        var weeklySalesChart = new Chart(
+            document.getElementById('weeklySalesChart'),
+            config5
+        );
+
+        function updateWeeklySalesItemChart(){
+
+            $.ajax('@Url.Action("WeeklySalesCountChart")', {
+                type: 'GET',
+                async: false,
+                dataType: 'json',
+                success: function (response, status, xhr) {
+                    console.log(response);
+                    labels5 = [];
+                    dataset5 = [];
+                    productCount = [];
+
+                    for (i = 0; i < response.length; i++) {
+                        labels5.push(response[i].nameOfDay);
+                        dataset5.push(response[i].itemCount);
+                        productCount.push(response[i].productCount);
+                    }
+
+                    weeklySalesChart.data.datasets[0].data = dataset5;
+                    weeklySalesChart.data.datasets[1].data = productCount;
+                    weeklySalesChart.data.labels = labels5;
+
+                    weeklySalesChart.update();
+
+                    console.log(weeklySalesChart.data);
+
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+
+        }
+
+    $(function(){
+        updateWeeklySalesItemChart();
+    })
+</script>
+
+
+<script>
+    var labels6 = [];
+    var dataset6 = [];
+    var deliveryCharge = [];
+
+    const data6 = {
+      labels: labels6,
+      datasets: [{
+        label: 'My First Dataset',
+        data: [65, 59, 80, 81, 56, 55, 40],
+        //barThickness: 40,
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }]
+    };
+
+    const config6 = {
+      type: 'line',
+      data: data6,
+      responsive:true,
+      maintainAspectRatio: false,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          }
+        }
+      },
+    };
+
+
+    const weeklySalesAmountChart = new Chart(
+        document.getElementById('weeklySalesAmountChart'),
+        config6
+    );
+
+    function updateWeeklySalesAmountChart(){
+
+            $.ajax('@Url.Action("GetWeeklyItemSalesAmount")', {
+                type: 'GET',
+                async: false,
+                dataType: 'json',
+                success: function (response, status, xhr) {
+                    console.log(response);
+                    labels6 = [];
+                    dataset6 = [];
+
+                    for (i = 0; i < response.length; i++) {
+                        labels6.push(response[i].nameOfDay);
+                        dataset6.push(response[i].orderAmount);
+                    }
+
+                    weeklySalesAmountChart.data.datasets[0].data = dataset6;
+                    weeklySalesAmountChart.data.labels = labels6;
+
+                    weeklySalesAmountChart.update();
+
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+
+        }
+
+    $(function(){
+        updateWeeklySalesAmountChart();
+    })
+
+</script>
+
+
+<script>
+    var labels = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
+    var data = {
+      labels: labels,
+      datasets: [{
+        label: 'My First Dataset',
+        data: [65, 59, 80, 81, 56, 55, 40],
+        //barThickness: 40,
+        maxBarThickness: 50,
+        //borderRadius: 10,
+        backgroundColor: [
+          //'rgba(255, 99, 132, 0.5)',
+          //'rgba(255, 159, 64, 0.5)',
+          //'rgba(255, 205, 86, 0.5)',
+          'rgba(75, 192, 192)',
+          //'rgba(54, 162, 235, 0.5)',
+          //'rgba(153, 102, 255, 0.5)',
+          //'rgba(201, 203, 207, 0.5)'
+        ],
+        borderColor: [
+          //'rgb(255, 99, 132)',
+          //'rgb(255, 159, 64)',
+          //'rgb(255, 205, 86)',
+          'rgb(75, 192, 192)',
+          //'rgb(54, 162, 235)',
+          //'rgb(153, 102, 255)',
+          //'rgb(201, 203, 207)'
+        ],
+        borderWidth: 0
+      }]
+    };
+
+    var config = {
+      type: 'bar',
+      data: data,
+      responsive:true,
+      maintainAspectRatio: false,
+      options: {
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            //grid: {
+            //  display: false
+            //}
+          }
+        }
+      },
+    };
+
+
+
+
+    var labels2 = [65, 59, 80, 81, 56, 55, 40];
+    var data2 = {
+      labels: labels2,
+      datasets: [{
+        label: 'My First Dataset',
+        data: [65, 59, 80, 81, 56, 55, 40],
+        //barThickness: 40,
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }]
+    };
+
+    var config2 = {
+      type: 'line',
+      data: data2,
+      responsive:true,
+      maintainAspectRatio: false,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          }
+        }
+      },
+    };
+
+
+    //const barChart = new Chart(
+    //    document.getElementById('barChart'),
+    //    config
+    //);
+
+    //const lineChart = new Chart(
+    //    document.getElementById('lineChart'),
+    //    config2
+    //);
+
+
+
+
+    var olddata = [];
+    var oldlabel = [];
+
+    var data3 = {
+      labels: oldlabel,
+      datasets: [{
+        label: 'My First Dataset',
+        data: olddata,
+        //barThickness: 40,
+        fill: false,
+        borderColor: '#0073b1',
+        //backgroundColor: [
+        //  'rgba(75, 192, 192)',
+        //],
+        tension: 0.1
+      }]
+    };
+
+    var config3 = {
+      type: 'line',
+      data: data3,
+      responsive:true,
+      maintainAspectRatio: false,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          }
+        }
+      },
+    };
+
+    var lineLiveChart = new Chart(
+        document.getElementById('lineLiveChart'),
+        config3
+    );
+
+
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    //$(function(){
+    //    setInterval(updateChart, 1000);
+    //});
+
+
+    function updateChart(){
+        var val = getRandomInt(100);
+        var val2 = new Date().toLocaleTimeString('en-US', { hour12: false,
+                                             hour: "numeric",
+                                             minute: "numeric",
+                                             second: "numeric"});
+        //const d = new Date();
+        //let text = val2.toTimeString();
+        //console.log(val2);
+        if(olddata.length > 60){
+            olddata.shift();
+            oldlabel.shift();
+        }
+
+        olddata.push(val);
+        oldlabel.push(val2);
+        lineLiveChart.data.datasets[0].data = olddata;
+        lineLiveChart.data.labels = oldlabel;
+
+        //lineLiveChart.data.datasets[0].data[7] = val;
+        //lineLiveChart.data.labels[7] = "Newly Added";
+
+        lineLiveChart.update();
+    }
+
+</script>
+}

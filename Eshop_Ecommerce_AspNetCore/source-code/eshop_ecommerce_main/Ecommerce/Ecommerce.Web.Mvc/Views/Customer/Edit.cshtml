@@ -1,0 +1,57 @@
+﻿@model Ecommerce.Application.Handlers.Customers.Commands.UpdateCustomerCommand
+
+@{
+    ViewData["Title"] = "Update Customer";
+    Layout = LayoutPage.AdminLayout;
+}
+
+<div class="page-title-box">
+    <h4 class="page-title">Customer</h4>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="card-title">Update Customer</div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="control-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="control-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="BillingAddress" class="control-label"></label>
+                        <textarea asp-for="BillingAddress" rows="4" class="form-control"></textarea>
+                        <span asp-validation-for="BillingAddress" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ShippingAddress" class="control-label"></label>
+                        <textarea asp-for="ShippingAddress" rows="4" class="form-control"></textarea>
+                        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+            <div class="mt-3">
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="fa fa-reply"></i> Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>

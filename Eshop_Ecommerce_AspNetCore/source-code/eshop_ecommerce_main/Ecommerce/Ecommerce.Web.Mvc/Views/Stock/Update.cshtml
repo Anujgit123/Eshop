@@ -1,0 +1,210 @@
+﻿@model ProductStockDto
+@{
+    ViewData["Title"] = "Add Product Stock";
+}
+
+@section Styles{
+<style>
+    .stock-variable-image {
+        height: 50px;
+        width: 50px;
+        object-fit: cover;
+    }
+
+
+    .stock-image {
+        height: 200px;
+        width: 200px;
+        object-fit: cover;
+        box-shadow: 0 0 3px #ccc;
+        padding: 3px;
+    }
+
+    
+</style>
+}
+
+
+<div class="page-title-box">
+    <h4 class="page-title">Manage Product Stock</h4>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="card-title">Product Details</div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="pb-3">
+                    <div class="mb-2">
+                        <h4 class="mb-0">@Model.Name <a asp-action="Details" asp-controller="Product" asp-route-id="@Model.ProductId" class="btn btn-link p-0 text-start fw-bold">Edit</a></h4>
+                        <p class="d-block">In <span style="color: #0084B4">@Model.CategoryName</span></p>
+                    </div>
+                    <img class="stock-image" src="@(Model.ProductImagePreview != null? "/" + Model.ProductImagePreview : "/media/images/no-image.png")" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="card-title">Product Variable</div>
+    </div>
+    <div class="card-body">
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tblProductVariant">
+                        <thead>
+                            <tr>
+                                <th class="w-80-c">Preview</th>
+                                <th>Product Variable</th>
+                                @*<th>Sku</th>
+                                <th class="mw-100-c">Unit Price</th>*@
+                                <th class="w-80-c">In Stock</th>
+                                <th class="w-140-c">Add/Remove</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.ProductVarient != null)
+                            {
+                                foreach (var item in Model.ProductVarient)
+                                {
+                                    <tr>
+                                        <td hidden><input type="text" asp-for="@item.Id" name="VariantId" class="form-control" /></td>
+                                        <td class="py-1 w-80-c">
+                                            <img class="stock-variable-image" src="@(item.VarientImagePreview != null? "/" + item.VarientImagePreview : "/media/images/no-image.png")" alt="Product picture">
+                                        </td>
+                                        <td>
+                                            <span>Title: @item.Title</span>
+                                            <span class="d-block">Sku: @item.Sku</span>
+                                            <span class="d-block">Unit Price: @item.Price</span>
+                                        </td>
+                                        @*<td>@item.Sku</td>
+                                        <td class="mw-100-c">@item.Price</td>*@
+                                        <td class="w-80-c"><span class="variable-qty">@item.Quantity</span></td>
+                                        <td class="w-140-c"><input type="number" name="NewStockQuantity" class="form-control" /></td>
+                                        <td>
+                                            <textarea class="form-control" name="Description" rows="2"></textarea>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0)" class="btn btn-success btn-sm mb-1" id="stockAddition">Add</a>
+                                            <a href="javascript:void(0)" class="btn btn-soft-secondary btn-sm mb-1" id="stockDeduction">Deduct</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="my-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fa fa-reply"></i> Back to Search</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    
+    <script>
+        //Stock addition
+        $(document).on('click', '#stockAddition', function (e) {
+            e.preventDefault();
+            var thisTr = $(this).closest('tr');
+            var data = JSON.stringify({
+                VariantId: thisTr.find('td:eq(0)').find('input[name=VariantId]').val(),
+                Quantity: thisTr.find('td:eq(4)').find('input[name=NewStockQuantity]').val(),
+                Description: thisTr.find('td:eq(5)').find('textarea[name=Description]').val(),
+            });
+
+
+
+            $.when(AddStock(data)).then(function (response) {
+                //if success
+                console.log(response);
+                if(response != 'false'){
+                    thisTr.find('td:eq(3)').find('.variable-qty').html(response);
+                    thisTr.find('td:eq(4)').find('input[name=NewStockQuantity]').val('');
+                    thisTr.find('td:eq(5)').find('textarea[name=Description]').val('');
+                    
+                }
+                notifier.open({ type: "success", message: "Product Updated" });
+            }).fail(function (err) {
+                console.log(err);
+                notifier.open({ type: "error", message: err });
+            });
+        });
+
+
+        function AddStock(data) {
+            console.log(data);
+            var obj = jQuery.parseJSON(data);
+            return $.ajax({
+                url: "/Stock/AddStock",
+                type: 'POST',
+                data: obj,
+                success: function (result) {
+                    console.log(result);
+                    //location.reload();
+                },
+                error: function () {
+                    alert("Error!")
+                }
+            });
+        }
+
+        //Stock deduction
+        $(document).on('click', '#stockDeduction', function (e) {
+            e.preventDefault();
+            var thisTr = $(this).closest('tr');
+            var data = JSON.stringify({
+                VariantId: thisTr.find('td:eq(0)').find('input[name=VariantId]').val(),
+                Quantity: thisTr.find('td:eq(4)').find('input[name=NewStockQuantity]').val(),
+                Description: thisTr.find('td:eq(5)').find('textarea[name=Description]').val(),
+            });
+
+
+
+            $.when(removeStock(data)).then(function (response) {
+                //if success
+                console.log(response);
+                if(response != 'false'){
+                    thisTr.find('td:eq(3)').find('.variable-qty').html(response);
+                    thisTr.find('td:eq(4)').find('input[name=NewStockQuantity]').val('');
+                    thisTr.find('td:eq(5)').find('textarea[name=Description]').val('');
+                    
+                }
+                notifier.open({ type: "success", message: "Product Updated" });
+            }).fail(function (err) {
+                console.log(err);
+                notifier.open({ type: "error", message: err });
+            });
+        });
+
+
+        function removeStock(data) {
+            console.log(data);
+            var obj = jQuery.parseJSON(data);
+            return $.ajax({
+                url: "/Stock/RemoveStock",
+                type: 'POST',
+                data: obj,
+                success: function (result) {
+                    console.log(result);
+                    //location.reload();
+                },
+                error: function () {
+                    alert("Error!")
+                }
+            });
+        }
+    </script>
+}

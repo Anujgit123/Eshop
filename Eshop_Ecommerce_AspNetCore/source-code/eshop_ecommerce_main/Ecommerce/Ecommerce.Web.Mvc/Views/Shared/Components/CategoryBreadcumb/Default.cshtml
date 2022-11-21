@@ -1,0 +1,68 @@
+﻿@*@{ var categorybread = ViewBag.CategoryBreadcumb as Category; }*@
+@{
+    var categorybread = ViewBag.CategoryBreadcumb as IEnumerable<BreadCumbVM>;
+    var last = categorybread.Last();
+    var lastnolink = (bool)ViewBag.Lastnolink;
+}
+
+
+
+@if (categorybread != null)
+{
+
+    <div class="breadcrumb_section">
+        <div class="container">
+            <ul class="breadcrumb_nav ul_li">
+                <li><a href="/">Home</a></li>
+                <li><a asp-controller="Shop" asp-action="Index">Shop</a></li>
+                @foreach (var item in categorybread)
+                {
+                    if (item.Equals(last))
+                    {
+                        if (lastnolink)
+                        {
+                            <li><a href="/shop/@item.Slug">@item.Name</a></li>
+                        }
+                        else
+                        {
+                            <li>@item.Name</li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a href="/shop/@item.Slug">@item.Name</a></li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+
+}
+
+
+@*<a href="/">Home</a><i class="fa fa-angle-right mx-1 text-secondary"></i>
+    @if (categorybread != null)
+    {
+        @foreach (var item in categorybread)
+        {
+            if (item.Equals(last))
+            {
+                if (lastnolink)
+                {
+                    <a href="/shop/@item.Slug">@item.Name</a>
+                }
+                else
+                {
+                    <span>@item.Name</span>
+                }
+
+            }
+            else
+            {
+                <a href="/shop/@item.Slug">@item.Name</a><i class="fa fa-angle-right mx-1 text-secondary"></i>
+            }
+
+        }
+    }*@
+
+

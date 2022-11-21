@@ -1,0 +1,33 @@
+﻿<script src="/themes/shop/js/jquery.min.js" rel="stylesheet"></script>
+<script src="/themes/shop/js/popper.min.js" rel="stylesheet"></script>
+<script src="/themes/shop/js/bootstrap.min.js" rel="stylesheet"></script>
+<script src="/lib/jquery-validate/jquery.validate.min.js" rel="stylesheet"></script>
+<script src="/lib/jquery-validate/jquery.validate.min.js" rel="stylesheet"></script>
+<script src="/lib/jquery-nice-select/js/jquery.nice-select.min.js" rel="stylesheet"></script>
+<script src="/media/js/notyf.min.js" rel="stylesheet"></script>
+<!-- carousel - jquery plugins collection -->
+<script src="/themes/shop/js/jquery-plugins-collection.js" rel="stylesheet"></script>
+<script src="/themes/shop/cat/jquery-stack-menu.js" rel="stylesheet"></script>
+<script src="/media/js/sweetalert.min.js" rel="stylesheet"></script>
+<!-- custom - main-js -->
+<script src="/themes/shop/js/main.js" rel="stylesheet"></script>
+<script src="/themes/shop/js/custom.js" rel="stylesheet"></script>
+@*<script src="~/js/offcanvas.js"></script>*@
+
+<script>
+    //$(function () {
+    //    $(".su-preloader").fadeOut(300);
+    //    $("body").css("overflow", "scroll");
+    //});
+
+    //var SuLoader = {
+    //    start: function () { $(".su-preloader").fadeIn(300) },
+    //    done: function () { $(".su-preloader").fadeOut(300) }
+    //};
+
+    var preloader = {
+        start: function () { $('#preloader').fadeIn('slow'); },
+        done: function () { $('#preloader').fadeOut('slow', function () { $(this).remove(); }); }
+    };
+
+</script>

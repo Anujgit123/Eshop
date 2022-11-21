@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Cart";
+    var cart = ViewBag.Cart as List<CartDto>;
+    decimal totalPrice = 0;
+    GeneralConfigurationDto conGen = K["GeneralConfiguration"] != null ? JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]) : new GeneralConfigurationDto();
+}
+
+
+
+@if (cart != null && cart.Count() != 0)
+{
+
+    <div class="cart_update_wrap">
+        <p class="mb-0"><i class="fal fa-check-square"></i> Final shipping cost will update based on shipping area & method.</p>
+    </div>
+
+    <div class="cart_table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th class="text-center">Price</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in cart)
+                {
+                    totalPrice += (item.Price * @item.Qty);
+                    <tr>
+                        <td hidden>@item.VariableId</td>
+                        <td>
+                            <div class="cart_product">
+                                <img src="@(item.Image != null? "/" + item.Image:"/assets/images/no-image.png")" alt="image_not_found">
+                                <h3><a asp-action="ProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">@item.Title</a></h3>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span>@conGen.CurrencySymbol</span><span class="price_text">@item.Price</span></span>
+                        </td>
+                        <td class="text-center">
+                            <form action="#">
+                                <div class="quantity_input">
+                                    <button type="button" class="input_number_decrement" onclick="ItemDecrement('@item.VariableId')">
+                                        <i class="fal fa-minus"></i>
+                                    </button>
+                                    <input class="input_number" type="text" value="@item.Qty" readonly disabled>
+                                    @*<span class="font-weight-bold mx-2">@item.Qty</span>*@
+                                    <button type="button" class="input_number_increment" onclick="ItemIncrement('@item.VariableId')">
+                                        <i class="fal fa-plus"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
+                        <td class="text-center">
+                            <span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span>@conGen?.CurrencySymbol</span><span class="price_text">@(item.Price * @item.Qty)</span></span>
+                        </td>
+                        <td class="text-center"><button type="button" class="remove_btn" onclick="CartItemRemove('@item.VariableId')"><i class="fal fa-trash-alt"></i></button></td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div class="row justify-content-end">
+
+        <div class="col col-lg-6">
+            <div class="cart_total_table">
+                <ul class="ul_li_block">
+                    <li>
+                        <span>Cart Subtotal</span>
+                        <span class="@(conGen?.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><ct>@conGen?.CurrencySymbol</ct><ct>@totalPrice</ct></span>
+                    </li>
+                    <li>
+                        <span>Shipping and Handling</span>
+                        <span>Calculate In Checkout</span>
+                    </li>
+                    <li>
+                        <span>Order Total</span>
+                        <span class="@(conGen?.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><ct>@conGen?.CurrencySymbol</ct><ct class="total_price">@totalPrice</ct></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="text-end"><a class="btn btn_dark" href="/checkout">Prceed To Checkout</a></div>
+    </div>
+
+}
+else
+{
+    <section class="empty_cart_section section_space">
+        <div class="container">
+            <div class="empty_cart_content text-center">
+                <span class="cart_icon">
+                    <i class="icon icon-ShoppingCart"></i>
+                </span>
+                <h3>Your Cart is Empty.</h3>
+                <a class="btn btn_secondary" asp-controller="Shop" asp-action="Index"><i class="far fa-chevron-left"></i> Continue shopping </a>
+            </div>
+        </div>
+    </section>
+}

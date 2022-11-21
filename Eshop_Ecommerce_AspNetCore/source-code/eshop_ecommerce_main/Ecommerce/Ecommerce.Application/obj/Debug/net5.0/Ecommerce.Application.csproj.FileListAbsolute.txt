@@ -1,0 +1,15 @@
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\bin\Debug\net5.0\Ecommerce.Application.deps.json
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\bin\Debug\net5.0\Ecommerce.Application.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\bin\Debug\net5.0\Ecommerce.Application.pdb
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\bin\Debug\net5.0\Ecommerce.Domain.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\bin\Debug\net5.0\Ecommerce.Domain.pdb
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.csproj.AssemblyReference.cache
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.AssemblyInfoInputs.cache
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.AssemblyInfo.cs
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.csproj.CoreCompileInputs.cache
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.csproj.CopyComplete
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\refint\Ecommerce.Application.dll
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\Ecommerce.Application.pdb
+C:\Users\anujy\Downloads\E_shop\Eshop_Ecommerce_AspNetCore\source-code\eshop_ecommerce_main\Ecommerce\Ecommerce.Application\obj\Debug\net5.0\ref\Ecommerce.Application.dll

@@ -1,0 +1,66 @@
+﻿@model ContactQueryDto
+
+@{
+    ViewData["Title"] = "Contact Us";
+    Layout = LayoutPage.ShopLayout;
+}
+
+
+@section Styles{
+
+}
+
+
+
+<section class="contact_section section_space">
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col">
+                <div class="contact_info_wrap">
+                    <h3 class="contact_title">Contact Us<span></span></h3>
+                    <div class="text-center mb-4">
+                        <img src="/assets/svg/envelope-rafiki.svg" class="img-fluid" style="max-width: 400px;" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col col-lg-6">
+                <div>
+                    <div class="text-center">
+                        <p>Contact us to find out more or let us know how we can help you better.</p>
+                    </div>
+                </div>
+                <div class="contact_info_wrap">
+                    <form class="row" asp-controller="ContactQuery" asp-action="Send" method="post">
+                        <div class="form_item">
+                            <input type="text" asp-for="FullName" placeholder="Your Name">
+                        </div>
+                        <div class="row">
+                            <div class="col col-md-6 col-sm-6">
+                                <div class="form_item">
+                                    <input type="email" asp-for="Email" placeholder="Your Email">
+                                </div>
+                            </div>
+                            <div class="col col-md-6 col-sm-6">
+                                <div class="form_item">
+                                    <input type="text" asp-for="Subject" placeholder="Your Subject (max 100 char.)">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form_item">
+                            <textarea asp-for="MessageBody" placeholder="Message (max 1000 char.)"></textarea>
+                        </div>
+                        <div id="form-msg"></div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn_dark">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

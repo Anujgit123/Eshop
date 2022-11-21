@@ -1,0 +1,456 @@
+﻿@{
+    ViewData["Title"] = "User";
+}
+
+@section Styles{
+    <link href="~/media/css/media-select.css" rel="stylesheet" />
+}
+
+
+    <div class="page-title-box">
+        <h4 class="page-title">User</h4>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+        @if (AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_User_Create).Result.Succeeded)
+        {
+            <a su-data-createitem class="btn btn-soft-primary" data-bs-toggle="modal" data-bs-target='#create-modal' href="javascript:void(0)">Create New</a>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="UserTable" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th class="all">Name</th>
+                        <th>Full name</th>
+                        <th>Date of birth</th>
+                        <th>Age</th>
+                        <th>Email Confirmed</th>
+                        <th>Active</th>
+                        <th class="all"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+<partial name="_CreateUserPartial" /> @*Create User Modal*@
+<partial name="_EditUserPartial" /> @*Edit User Modal*@
+<partial name="_ManageUserRolePartial" /> @*Manage User Role*@
+<partial name="_ManageUserPermissionPartial" /> @*Manage User Permission*@
+<vc:image></vc:image>
+
+
+
+@section Scripts{
+    <script src="~/media/js/media-select.js"></script>
+    <script>
+
+        $(document).on('click', '[su-permission]', function () {
+            var id = $(this).attr("su-data-id");
+            editPermission(id);
+        });
+
+        function editPermission(id) {
+            $.ajax('@Url.Action("GetPermissionsByUser")/' + id, {
+                type: 'GET',  // http method
+                success: function (response, status, xhr) {
+                    console.log(response);
+
+                    $('.selected-user-permission').html(response.userName);
+                    var html = '';
+                    html += '<span hidden id="PermissionsUserId">' + response.userId + '</span>';
+                    html += '<span hidden id="PermissionsUserName">' + response.userName + '</span>';
+                    for (i = 0; i < response.managePermissionsDto.length; i++) {
+                        var ischecked = response.managePermissionsDto[i].checked == true ? "checked" : "";
+                        html += '<div class="form-check permission-item">';
+                        html += '<span hidden id="claimType' + i + '">' + response.managePermissionsDto[i].type + '</span>';
+                        html += '<span hidden id="claimValue' + i + '">' + response.managePermissionsDto[i].value + '</span>';
+                        html += '<div class="custom-toggle01">';
+                        html += '<input type="checkbox" name="' + i + '" class="form-check-input" id="checked' + i + '" onchange="permissionChanged(' + i + ')" ' + ischecked + ' />';
+                        html += '<label class="form-check-label" for="checked' + i + '">' + response.managePermissionsDto[i].value.slice(12) + '</label>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
+                    $('#permissionGroup').html(html);
+
+
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+        }
+
+        function permissionChanged(i) {
+            var userId = document.getElementById("PermissionsUserId").innerHTML.trim();
+            var userName = document.getElementById("PermissionsUserName").innerHTML.trim();
+            var type = document.getElementById("claimType" + i).innerHTML.trim();
+            var value = document.getElementById("claimValue" + i).innerHTML.trim();
+            var checked = document.getElementById("checked" + i).checked;
+            console.log(userId, userName, type, value, checked);
+
+            var data = {
+                UserId: userId,
+                UserName: userName,
+                Type: type,
+                Value: value,
+                Checked: checked
+            }
+
+            $.ajax({
+                url: '@Url.Action("UpdateUserPermission")',
+                method: "POST",
+                data: data,
+                success: function (response, status, xhr) {
+                    console.log(response);
+                    if (response.success == true) {
+                        notifier.open({ type: "success", message: "Action Successfully!" });
+                    } else {
+                        notifier.open({ type: "error", message: "Occured a Problem!" });
+                    }
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+        }
+    </script>
+    <script>
+        function filterPermission() {
+            var input, filter, permissionGroup, permissionItem, label, i, txtValue;
+            input = document.getElementById("filterPermission");
+            filter = input.value.toUpperCase();
+            permissionGroup = document.getElementById("permissionGroup");
+            permissionItem = permissionGroup.getElementsByClassName("permission-item");
+            for (i = 0; i < permissionItem.length; i++) {
+                label = permissionItem[i].getElementsByTagName("label")[0];
+                txtValue = label.textContent || label.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    permissionItem[i].style.display = "";
+                } else {
+                    permissionItem[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+    <script>
+        $(document).on('click', '[su-roles]', function () {
+            var id = $(this).attr("su-data-id");
+            rolesByUserId(id);
+        });
+
+        function rolesByUserId(id) {
+            $.ajax('@Url.Action("GetUserRolesById")/' + id, {
+                type: 'GET',  // http method
+                success: function (response, status, xhr) {
+                    console.log(response);
+
+                    $('.selected-user-role').html(response.userName);
+                    var html = '';
+                    html += '<span hidden id="RoleUserId">' + response.userId + '</span>';
+                    html += '<span hidden id="RoleUserName">' + response.userName + '</span>';
+                    for (i = 0; i < response.manageRolesDto.length; i++) {
+                        var ischecked = response.manageRolesDto[i].checked == true ? "checked" : "";
+                        //html += '<div class="form-check permission-item">';
+                        //html += '<div class="custom-toggle01">';
+                        //html += '<input type="checkbox" name="' + i + '" class="form-check-input" id="checked' + i + '" onchange="roleChanged(' + i + ')" ' + ischecked + ' />';
+                        //html += '<label class="form-check-label" id="roleName' + i + '" for="checked' + i + '">' + response.manageRolesDto[i].name + '</label>';
+                        //html += '</div>';
+                        //html += '</div>';
+                        html += `<div class="mb-2">
+                                        <div class="checkbox_item role-item">
+                                            <label class="d-flex align-items-center" role-name="` + response.manageRolesDto[i].name + `" for="roleName` + i + `">
+                                                <input type="checkbox" name="`+ i + `" value="` + response.manageRolesDto[i].name + `" id="roleName` + i + `" onchange="roleChanged(` + i + `)" ` + ischecked + ` >
+                                                ` + response.manageRolesDto[i].name + `
+                                            </label>
+                                        </div>
+                                    </div>`;
+                    }
+                    $('#roleGroup').html(html);
+
+
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+        }
+
+
+        function roleChanged(i) {
+            var userId = document.getElementById("RoleUserId").innerHTML.trim();
+            var userName = document.getElementById("RoleUserName").innerHTML.trim();
+            //var roleName = document.getElementById("roleName" + i).innerHTML.trim();
+            var roleName = document.getElementById("roleName" + i).closest('.role-item > label').getAttribute('role-name');
+            var checked = document.getElementById("roleName" + i).checked;
+            console.log(userId, userName, roleName, checked);
+
+            var data = {
+                UserId: userId,
+                UserName: userName,
+                RoleName: roleName,
+                Checked: checked
+            }
+
+            $.ajax({
+                url: '@Url.Action("ManageUserRoles")',
+                method: "POST",
+                data: data,
+                success: function (response, status, xhr) {
+                    console.log(response);
+                    if (response.success == true) {
+                        notifier.open({ type: "success", message: "Action Successfully!" });
+                    } else {
+                        notifier.open({ type: "error", message: "Occured a Problem!" });
+                    }
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+        }
+    </script>
+    <script>
+
+        $(".defaultpassword_checkbox").click(function () {
+            if (this.checked) {
+                $("#CustomPasssword").hide();
+                $("input[type=password]").val("");
+            } else {
+                $("#CustomPasssword").show();
+            }
+        });
+
+    </script>
+
+    <script>
+
+        $(document).on('click', '[su-data-createitem]', function () {
+            $('[su-media-preview]').attr('src', '/media/images/no-image.png');
+            $('#create-modal [su-media-selected-input]').val('');
+        });
+
+        $(document).on('click', '[su-edit]', function () {
+            var id = $(this).attr("su-data-id");
+            editClick(id);
+        });
+
+
+
+        function editClick(id) {
+            $.ajax('@Url.Action("GetUserById")/' + id, {
+                type: 'GET',  // http method
+                success: function (response, status, xhr) {
+                    console.log(response);
+                    $(".validationerror").empty();
+                    $('#editForm').trigger("reset").setFormData(response.data);
+                    response.data.profilePicturePreview != null ?
+                        $('.user-image-edit-preview').attr('src', response.data.profilePicturePreview) :
+                        $('.user-image-edit-preview').attr('src', '/media/images/no-image.png');
+
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+        }
+
+        $("#editForm").submit(function (event) {
+            //debugger;
+            event.preventDefault();
+            $f = $(event.currentTarget); // fetch the form object
+
+            if ($f.valid()) { // check if form is valid
+                SuLoader.start();
+
+                var url = $f.attr("action");
+                var method = $f.attr("method");
+
+                if (method.toUpperCase() === "POST") {
+                    var data = new FormData(this); // prepare the FORM data to POST
+
+                    $.ajax({ // ajax POST
+                        url: url,
+                        method: "POST",
+                        cache: false,
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        enctype: 'multipart/form-data',
+                        success: function (response, status, xhr) {
+                            console.log(response);
+                            suTable.clearPipeline().draw(false);
+
+
+                            response.Success == false ?
+                                (notifier.open({ type: "error", message: "Occured a problem!" }), renderValidationError(response.Error)) :
+                                (notifier.open({ type: "success", message: "User updated successfully!" }), $("#edit-modal").modal('hide'), $f.trigger('reset'));
+                        },
+                        error: function (jqXhr, textStatus, errorMessage) {
+                            console.log(errorMessage);
+                        },
+                        complete: function (jqXHR, status) {
+                            SuLoader.done();
+                        }
+                    });
+                }
+            }
+        });
+
+    </script>
+
+    <script>
+
+        $(function () {
+
+            suTable = $('#UserTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "responsive": true,
+                "autoWidth": false,
+                "ajax": $.fn.dataTable.pipeline({
+                    url: '@Url.Action("GetUsers")',
+                    pages: 5, //number of pages to cache
+                    method: 'POST'
+                }),
+                "order": [[0, "desc"]],
+                "columnDefs": [
+                    { "targets": [0], "visible": false, "searchable": false, "orderable": false },
+                    { "targets": [7], "searchable": false, "orderable": false, "className": "text-end user-action" }
+                ],
+                "columns": [
+
+                    { "data": "id", "name": "Id" },
+                    { "data": "userName", "name": "UserName" },
+                    {
+                        "data": "firstName", "name": "FirstName",
+                        "render": function (data, type, row) {
+                            return row.firstName + " " + row.lastName;
+                        }
+                    },
+                    {
+                        "data": "dateOfBirth", "name": "DateOfBirth",
+                        "render": function (data, type, row) {
+                            return row.dateOfBirth != null ? '<span>' + dayjs(row.dateOfBirth).format('YYYY-MM-DD') + '</span>' : '';
+                        }
+                    },
+                    { "data": "age", "name": "Age" },
+                    {
+                        "data": null,
+                        "name": "EmailConfirmed",
+                        "render": function (data, type, row) {
+                            return row.emailConfirmed == true ? '<span class="badge badge-soft-success">Yes</span>' : '<span class="badge badge-soft-danger">No</span>';
+                        }
+                    },
+                    {
+                        "data": null,
+                        "name": "IsActive",
+                        "render": function (data, type, row) {
+                            return row.isActive == true ? '<span class="badge badge-soft-success">Yes</span>' : '<span class="badge badge-soft-danger">No</span>';
+                        }
+                    },
+                    {
+                        'data': null,
+                        'render': function (data, type, row) {
+                            var myHtml = '';
+                            myHtml += '<div class="dropdown dropdown-sm">';
+                            myHtml += '<a href="javascript:void(0)" class="user-action btn btn-soft-primary btn-sm" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                            myHtml += '<i class="fas fa-list"></i>';
+                            myHtml += '</a>';
+                            myHtml += '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"">';
+
+        @{
+            if (AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_UserPermission_Edit).Result.Succeeded)
+            {
+                <text>
+                                        myHtml += '<li><a class="dropdown-item" su-permission su-data-id="' + row.id + '" data-bs-toggle="modal" data-bs-target="#permission-modal"href="javascript:void(0)">Permission</a></li>';
+                </text>
+            }
+            if (AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_UserRole_Edit).Result.Succeeded)
+            {
+                <text>
+                                        myHtml += '<li><a class="dropdown-item" su-roles su-data-id="' + row.id + '" data-bs-toggle="modal" data-bs-target="#role-modal" href="javascript:void(0)">Role</a></li>';
+                </text>
+            }
+            if (AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_User_Edit).Result.Succeeded)
+            {
+                <text>
+                                        myHtml += '<li><a class="dropdown-item" su-edit su-data-id="' + row.id + '" data-bs-toggle="modal" data-bs-target="#edit-modal" href="javascript:void(0)">Edit</a></li>';
+                </text>
+            }
+            if (AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_User_Delete).Result.Succeeded)
+            {
+                <text>
+                                        myHtml += '<li><a class="dropdown-item" su-dttable-delete su-data-id="' + row.id + '" su-data-action="@Url.Action("DeleteUser")"  href="javascript:void(0)">Delete</a></li>';
+                </text>
+            }
+        }
+
+                                myHtml += '</div>';
+                            myHtml += '</div>';
+                            return myHtml;
+                        }
+                    }
+                ]
+            });
+        });
+
+    </script>
+
+    <script>
+
+        $("#createForm").submit(function (event) {
+            //debugger;
+            event.preventDefault();
+            $f = $(event.currentTarget); // fetch the form object
+
+            if ($f.valid()) { // check if form is valid
+                SuLoader.start();
+
+                var url = $f.attr("action");
+                var method = $f.attr("method");
+
+                if (method.toUpperCase() === "POST") {
+                    var data = new FormData(this); // prepare the FORM data to POST
+
+                    $.ajax({ // ajax POST
+                        url: url,
+                        method: "POST",
+                        cache: false,
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        enctype: 'multipart/form-data',
+                        success: function (response, status, xhr) {
+                            console.log(response);
+                            suTable.clearPipeline().draw(false);
+
+                            response.success == false ?
+                                (notifier.open({ type: "error", message: "Occured a problem!" }), renderValidationError(response.error)) :
+                                (notifier.open({ type: "success", message: "User created successfully!" }), $("#create-modal").modal('hide'), $f.trigger('reset'));
+                        },
+                        error: function (jqXhr, textStatus, errorMessage) {
+                            console.log(errorMessage);
+                        },
+                        complete: function (jqXHR, status) {
+                            SuLoader.done();
+                        }
+                    });
+                }
+            }
+        });
+
+
+    </script>
+
+
+}

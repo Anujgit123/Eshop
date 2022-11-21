@@ -1,0 +1,71 @@
+﻿@model IEnumerable<CustomerOrderDto>
+
+@{
+    ViewData["Title"] = "My Orders";
+    Layout = LayoutPage.ShopLayout;
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+}
+
+
+<!-- account_section - start
+            ================================================== -->
+<section class="account_section section_space">
+    <div class="container">
+        <div class="row">
+            <div class="col col-lg-3">
+                <partial name="_CustomerAccountTab" />
+            </div>
+
+            <div class="col col-lg-9">
+                <div class="account_content_area">
+                    <h3>My Orders</h3>
+                    <ul class="content_layout ul_li_block">
+                        <li>
+                            <h4><strong>Your Order History</strong></h4>
+                        </li>
+                        <li>
+                            <div>
+                                @if (Model != null && Model.Any())
+                                {
+                                    <div class="list-group">
+                                        @foreach (var item in Model)
+                                        {
+                                            <form method="post" asp-controller="TrackOrder" asp-action="Index" asp-route-invoiceNo="@item.InvoiceNo">
+                                                <a href="javascript:void(0)" class="list-group-item list-group-item-action order-item">
+                                                    <div>
+                                                        <div class="text-dark" style="line-height: 1rem;"><span class="fw-bold">Order No.: </span>@item.InvoiceNo</div>
+                                                        <div class="text-dark" style="line-height: 1rem;"><span class="fw-bold">Order Date: </span>@item.OrderDate</div>
+                                                        <div class="text-dark" style="line-height: 1rem;"><span class="fw-bold">Amount: </span><span style="display: inline-block; color: #d63384;"><span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap" : "")"><span>@conGen.CurrencySymbol</span><span>@item.OrderAmount</span></span></span></div>
+                                                    </div>
+                                                </a>
+                                            </form>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center">
+                                        <h5>No result found.</h5>
+                                    </div>
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- account_section - end
+================================================== -->
+@section Scripts{
+<script src="~/others/js/customer-account.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $(".order-item").click(function (e) {
+            $(this).closest('form').submit();
+        });
+    });
+</script>
+}

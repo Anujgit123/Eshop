@@ -1,0 +1,143 @@
+﻿@model EditProfileDto
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+
+@section Styles{
+    <link href="~/others/css/profile.css" rel="stylesheet" />
+    <link href="~/media/css/media-select.css" rel="stylesheet" />
+}
+
+    <div class="page-title-box">
+        <h4 class="page-title">Profile Settings</h4>
+    </div>
+
+
+    <div class="container">
+        <div class="row flex-lg-nowrap">
+            <div class="col">
+                <div class="row">
+                    <div class="col-12 col-md-3 mb-3" id="profilesetting">
+                        <partial name="_ProfileSideNav" />
+                    </div>
+                    <div class="col mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="e-profile">
+                                    <form class="form" asp-action="EditProfile" enctype="multipart/form-data" method="post">
+                                        <div class="row">
+                                            <div su-media-section>
+                                                <img class="img-fluid mb-1" style="width: 125px; height: 140px; object-fit: cover;" su-media-preview src="@(Model.ProfilePicturePreview != null? "/" + Model.ProfilePicturePreview : "/media/images/no-image.png")" alt="Product picture">
+                                                <div class="btn-group btn-group-xs" role="group" aria-label="Basic outlined example">
+                                                    <button type="button" class="btn btn-soft-primary" su-media-popup>Change Photo</button>
+                                                    <button type="button" class="btn btn-soft-danger" su-media-deselect><i class="fas fa-trash-alt"></i></button>
+                                                </div>
+                                                <input su-media-selected-input type="text" asp-for="@Model.ProfilePicture" hidden>
+                                            </div>
+                                            <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                                                <div class="mb-2 mb-sm-0">
+                                                    <h4 class="pt-sm-2 mb-0 text-nowrap">@(User.FindFirst(ClaimTypes.GivenName)?.Value)</h4>
+                                                <p class="mb-0">@User.Identity.Name</p>
+                                            </div>
+                                            <div class="text-center text-sm-right">
+                                                <span class="badge bg-secondary">@User.Identity.Name</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-4">
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col">
+                                                    @*<input su-media-selected-input type="text" asp-for="ProfilePicture" hidden>*@
+                                                    <div class="mb-3">
+                                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label>First Name</label>
+                                                                <input class="form-control" type="text" asp-for="FirstName">
+                                                                <span asp-validation-for="FirstName"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label>Last Name</label>
+                                                                <input class="form-control" type="text" asp-for="LastName">
+                                                                <span asp-validation-for="LastName"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Email</label>
+                                                                <input class="form-control" type="text" asp-for="Email">
+                                                                <span asp-validation-for="Email"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Phone</label>
+                                                                <input class="form-control" type="text" asp-for="PhoneNumber">
+                                                                <span asp-validation-for="PhoneNumber"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label>Date of Birth</label>
+                                                                <input class="form-control" type="date" asp-for="DateOfBirth">
+                                                                <span asp-validation-for="DateOfBirth"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="Gender">Gender</label>
+                                                                <select class="form-select mb-1" asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+                                                                <span asp-validation-for="Gender"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="d-grid gap-2 d-sm-block">
+                                                    <button type="submit" class="btn btn-success py-2 px-5">Update</button>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3 mb-3">
+                    <partial name="_ProfileLeftSide" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Image select modal -->
+<vc:image></vc:image>
+
+@section Scripts{
+    <script src="~/others/js/profile.js"></script>
+    <script src="~/media/js/media-select.js"></script>
+}

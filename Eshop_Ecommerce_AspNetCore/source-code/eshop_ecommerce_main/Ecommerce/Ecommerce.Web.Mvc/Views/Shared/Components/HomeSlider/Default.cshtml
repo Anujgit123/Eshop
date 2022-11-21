@@ -1,0 +1,17 @@
+﻿
+@{
+    var headerSlider = ViewBag.HeaderSlider as IEnumerable<HeaderSliderDto>;
+}
+
+<div class="main_slider" data-slick='{"arrows": false}'>
+    @foreach (var item in headerSlider)
+    {
+        <div class="slider_item set-bg-image" data-background="@(item.ImagePreview != null ? "/" + item.ImagePreview : "/assets/images/no-image.png")">
+            <div class="slider_content container">
+                <h4 class="big_title" data-animation="fadeInUp2" data-delay=".4s">@item.HeaderTextLineOne  <span>@item.HeaderTextLineTwo</span></h4>
+                <p data-animation="fadeInUp2" data-delay=".6s">@item.SubText</p>
+                <a class="btn btn_primary" href="/shop" data-animation="fadeInUp2" data-delay=".8s">Start Buying</a>
+            </div>
+        </div>
+    }
+</div>

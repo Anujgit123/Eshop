@@ -1,0 +1,64 @@
+﻿@model PaginatedList<StockDto>
+
+@{
+    ViewData["Title"] = "Stock Hostory";
+    Layout = LayoutPage.AdminLayout;
+}
+
+<div class="page-title-box">
+    <h4 class="page-title">Stock Entry History</h4>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="my-3 d-flex justify-content-between">
+            <vc:page-size-section action="EntryHistory"/>
+            <vc:search-section action="EntryHistory"/>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr class="sort-section">
+                        <th><vc:item-sort action="EntryHistory" sort-column="Variant.Title" display-name="Title"/></th>
+                        <th><vc:item-sort action="EntryHistory" sort-column="Variant.Sku" display-name="Sku"/></th>
+                        <th><vc:item-sort action="EntryHistory" sort-column="StockInputType" display-name="Entry Type"/></th>
+                        <th><vc:item-sort action="EntryHistory" sort-column="Quantity" display-name="Quantity"/></th>
+                        <th><vc:item-sort action="EntryHistory" sort-column="Description" display-name="Description"/></th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Variant.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Variant.Sku)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StockInputType)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LastModifiedDate)
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <vc:page-section action="EntryHistory"/>
+        </div>
+    </div>
+</div>

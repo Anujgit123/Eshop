@@ -1,0 +1,142 @@
+﻿@model ProductDetailsDto
+
+@{
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+    StockConfigurationDto conStock = JsonSerializer.Deserialize<StockConfigurationDto>(K["StockConfiguration"]);
+}
+
+<div class="productId" hidden>@ViewBag.ProductId</div>
+<div class="out-of-stock-threshold" hidden>@conStock?.OutOfStockThreshold</div>
+<div class="low-stock-threshold" hidden>@conStock?.LowStockThreshold</div>
+<div class="is-lowstock-notification-enabled" hidden>@conStock?.IsLowStockNotificationEnabled.ToString().ToLower()</div>
+<div class="is-outofstock-notification-enabled" hidden>@conStock?.IsOutOfStockNotificationEnabled.ToString().ToLower()</div>
+
+<div class="modal fade" id="quickview_popup" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalToggleLabel2">Product Quick View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="product_details">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col col-lg-6">
+                                <div class="product_details_image p-0">
+                                    @if (Model.ProductImagePreview != null)
+                                    {
+                                        <img src="@("/" + Model.ProductImagePreview)" style="max-height: 420px; width: 100%; object-fit: cover; " />
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="product_details_content">
+                                    <h2 class="item_title">@Model.Name</h2>
+                                    <p>@Html.Raw(Model.ShortDescription)</p>
+                                    @*<div class="item_review">
+                                    <ul class="rating_star ul_li">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    </ul>
+                                    <span class="review_value">3 Rating(s)</span>
+                                    </div>*@
+                                    <div class="item_price">
+                                        <span class="@(conGen?.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span class="me-0">@conGen?.CurrencySymbol</span><span class="product-price me-0">@Model.Price</span></span>
+                                    </div>
+
+                                    <div class="mt-2 mb-4">
+                                        <!-- Stock Status (In Stock/Stock Low/Out Of Stock)-->
+                                        <div class="stock-status"></div>
+                                    </div>
+
+                                    @if (Model.VariableTheme != null)
+                                    {
+                                        <div class="item_attribute">
+                                            @*<h3 class="title_text">Options <span class="underline"></span></h3>*@
+                                            @if (Model.VariableTheme == ProductVarientTheme.ColorSize)
+                                            {
+                                                <div class="row size-block">
+                                                    <div class="col col-md-6">
+                                                        <div class="select_option clearfix">
+                                                            <h4 class="input_title">Size *</h4>
+                                                            <select class="product-size-dropdown nice-select" su-size-filter asp-items="ViewBag.SizeId" id="SizeId"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row color-block">
+                                                    <div class="col col-md-6">
+                                                        <div class="clearfix">
+                                                            <h4 class="input_title">Color *</h4>
+                                                            @for (int i = 0; i < Model.AvailableColorVarient.Count(); i++)
+                                                            {
+                                                                <div class="d-inline-block @(i == 0?"select-color":"")" su-color-filter="@Model.AvailableColorVarient[i].Id" style=" background: @Model.AvailableColorVarient[i].HexCode; height: 20px; width: 20px; margin-right: 8px; box-shadow: 0 0 3px #808080; border: 2px solid #fff; cursor: pointer; "></div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.VariableTheme == ProductVarientTheme.Size)
+                                            {
+                                                <div class="row size-block">
+                                                    <div class="col col-md-6">
+                                                        <div class="select_option clearfix">
+                                                            <h4 class="input_title">Size *</h4>
+                                                            <select class="product-size-dropdown nice-select" su-size-filter asp-items="ViewBag.SizeId" id="SizeId"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @if (Model.VariableTheme == ProductVarientTheme.Color)
+                                            {
+                                                <div class="row color-block">
+                                                    <div class="col col-md-6">
+                                                        <div class="clearfix">
+                                                            <h4 class="input_title">Color *</h4>
+                                                            @for (int i = 0; i < Model.AvailableColorVarient.Count(); i++)
+                                                            {
+                                                                <div class="d-inline-block @(i == 0?"select-color":"")" su-color-filter="@Model.AvailableColorVarient[i].Id" style="background: @Model.AvailableColorVarient[i].HexCode; height: 20px; width: 20px; margin-right: 8px; box-shadow: 0 0 3px #808080; border: 2px solid #fff; cursor: pointer;"></div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @*<span class="repuired_text">Repuired Fiields *</span>*@
+                                        </div>
+                                    }
+
+                                    <div class="quantity_wrap">
+                                        <form action="#">
+                                            <div class="quantity_input">
+                                                <button type="button" class="input_number_decrement counter__decrement">
+                                                    <i class="fal fa-minus"></i>
+                                                </button>
+                                                <input class="input_number counter__input" id="qty" type="text" value="1" min="1" readonly disabled>
+                                                <button type="button" class="input_number_increment counter__increment">
+                                                    <i class="fal fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <ul class="default_btns_group ul_li">
+                                        <li><a class="btn btn_primary addtocart_btn" href="javascript:void(0)" id="addToCart" product-varientId="@Model.FeatureVarient.Id">Add To Cart</a></li>
+                                        @*<li><a href="#!"><i class="fas fa-heart"></i></a></li>*@
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,847 @@
+﻿@model CheckoutDto
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = LayoutPage.ShopLayout;
+    var deliveryMethod = ViewData["DeliveryMethod"] as IEnumerable<DeliveryMethodDto>;
+    var customerInfo = ViewBag.CustomerInfo as CustomerDto;
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+    string stripPk = Configuration.GetValue<string>("Stripe:PublishKey");
+    string paypalClientId = Configuration.GetValue<string>("Paypal:ClientId");
+    string paypalCurrency = Configuration.GetValue<string>("Paypal:Currency");
+}
+
+
+@section Styles{
+    <link href="~/themes/shop/css/woocommerce-2.css" rel="stylesheet" />
+    <style>
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"], .checkout-section .nice-select,
+        textarea, .text-area {
+            width: 100%;
+            border-radius: 0px;
+            border: none;
+            min-height: 50px;
+            padding: .4rem 1rem;
+            background: #F5F5F7;
+        }
+
+        .form-check-input {
+            width: 1.5em;
+            height: 1.5em;
+            margin-top: 0.1em;
+        }
+
+        .form-check-label {
+            margin-left: 6px;
+        }
+
+        .payment-method .card .form-check-input:checked {
+            background-color: #4674c7;
+            border-color: #4674c7;
+        }
+
+        .payment-method .card .form-check-input {
+            width: 1.5em;
+            height: 1.5em;
+            margin-top: 1px;
+            vertical-align: middle;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            border: 1px solid #4674c752;
+        }
+
+
+        #card-element {
+            width: 100%;
+            border-radius: 0px;
+            border: none;
+            height: 50px;
+            padding: 15px 20px;
+            line-height: 50px;
+            background: #f5f5f7;
+        }
+
+        .payment-method .card {
+            border: none;
+            margin-bottom: 15px;
+            box-shadow: 0 0 5px #e5e5e5;
+        }
+
+        .payment-method .card-header {
+            background: #FFFFFF;
+            border: none;
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .payment-method .card .card-header input, .payment-method .card .card-header label {
+            cursor: pointer;
+        }
+    </style>
+    <style>
+        .input-invalid {
+            background: #dc354514 !important;
+            border: 1px solid #dc3545 !important;
+        }
+    </style>
+
+    <style>
+        .plans {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+
+            .plans .plan input[type="radio"] {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .plans .plan {
+                cursor: pointer;
+                width: 100%;
+                margin-bottom: 5px;
+                border: 1px solid #f7f7f7;
+            }
+
+                .plans .plan .plan-content {
+                    display: block;
+                    padding: 1rem 1.2rem 1.2rem 2.2rem;
+                    -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+                    -webkit-transition: -webkit-box-shadow 0.4s;
+                    transition: -webkit-box-shadow 0.4s;
+                    -o-transition: box-shadow 0.4s;
+                    transition: box-shadow 0.4s;
+                    transition: box-shadow 0.4s, -webkit-box-shadow 0.4s;
+                    position: relative;
+                }
+
+                    .plans .plan .plan-content img {
+                        margin-right: 30px;
+                        height: 72px;
+                    }
+
+                .plans .plan .plan-details span {
+                    display: block;
+                    font-size: 1em;
+                }
+
+        .container .title {
+            font-size: 16px;
+            font-weight: 500;
+            -ms-flex-preferred-size: 100%;
+            flex-basis: 100%;
+            color: #252f42;
+            margin-bottom: 20px;
+        }
+
+        .plans .plan .plan-details p {
+            font-size: 0.85em;
+            line-height: 18px;
+            margin-bottom: 0px;
+            font-weight: normal;
+        }
+
+        .plans .plan .plan-content:hover {
+            -webkit-box-shadow: 0px 3px 5px 0px #e8e8e8;
+            box-shadow: 0px 3px 5px 0px #e8e8e8;
+        }
+
+        /*        .plans .plan input[type="radio"]:checked + .plan-content:after {
+                                                                                                                                    content: "";
+                                                                                                                                    position: absolute;
+                                                                                                                                    height: 12px;
+                                                                                                                                    width: 12px;
+                                                                                                                                    background: #216fe0;
+                                                                                                                                    right: 10px;
+                                                                                                                                    top: 10px;
+                                                                                                                                    border-radius: 100%;
+                                                                                                                                    border: 3px solid #fff;
+                                                                                                                                    -webkit-box-shadow: 0px 0px 0px 2px #0066ff;
+                                                                                                                                    box-shadow: 0px 0px 0px 2px #0066ff;
+                                                                                                                                }*/
+
+        /*    .plans .plan input[type="radio"]:checked + .plan-content:after {
+                                                                                                            content: "";
+                                                                                                            position: absolute;
+                                                                                                            height: 12px;
+                                                                                                            width: 12px;
+                                                                                                            background: #ffffff00;
+                                                                                                            right: 10px;
+                                                                                                            top: 10px;
+                                                                                                            border-radius: 100%;
+                                                                                                            border: 3px solid #ffffff00;
+                                                                                                            -webkit-box-shadow: 0px 0px 0px 2px #ffffff00;
+                                                                                                            box-shadow: 0px 0px 0px 2px #ffffff00;
+                                                                                                        }*/
+
+        /*.plans .plan input[type="radio"]:checked + .plan-content:after {
+                                                                                                                    content: "";
+                                                                                                                    position: absolute;
+                                                                                                                    height: 18px;
+                                                                                                                    width: 18px;
+                                                                                                                    background: #7b63ff;
+                                                                                                                    left: 10px;
+                                                                                                                    top: 50%;
+                                                                                                                    border-radius: 100%;
+                                                                                                                    border: 4px solid #ffffff;
+                                                                                                                    -webkit-box-shadow: 0px 0px 0px 1px #e1e2e7;
+                                                                                                                    box-shadow: 0px 0px 0px 1px #e1e2e7;
+                                                                                                                    transform: translate(0px, -50%);
+                                                                                                                }*/
+
+
+
+        .plans .plan input[type="radio"]:checked + .plan-content:after {
+            content: "";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            width: 8px;
+            height: 15px;
+            border: solid #0080bf;
+            border-width: 0 3px 3px 0;
+            transform: translate(0px, -65%) rotate(45deg);
+        }
+
+        .plans .plan input[type="radio"]:checked + .plan-content {
+            /*border: 2px solid #216ee0;*/
+            background: #eaf1fe;
+            -webkit-transition: ease-in 0.3s;
+            -o-transition: ease-in 0.3s;
+            transition: ease-in 0.3s;
+        }
+
+            .plans .plan input[type="radio"]:checked + .plan-content .plan-details span {
+                color: #0080bf;
+            }
+    </style>
+    @*<style>
+    div.payment_box {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1em;
+    margin: 1em 0;
+    font-size: .92em;
+    border-radius: 2px;
+    line-height: 1.5;
+    background-color: #dfdcde;
+    color: #515151;
+    }
+
+    div.payment_box::before {
+    content: "";
+    display: block;
+    border: 1em solid #dfdcde;
+    border-right-color: transparent;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    position: absolute;
+    top: -0.75em;
+    left: 0;
+    margin: -1em 0 0 2em;
+    }
+    </style>*@
+    }
+
+
+
+    <!-- breadcrumb_section-start================================================== -->
+    <div class="breadcrumb_section">
+        <div class="container">
+            <ul class="breadcrumb_nav ul_li">
+                <li><a href="index.html">Home</a></li>
+                <li>Checkout</li>
+            </ul>
+        </div>
+    </div>
+    <!-- breadcrumb_section-end================================================== -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center mt-4">Checkout</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- checkout-section-start================================================== -->
+    <section class="checkout-section section_space pt-5">
+        <div class="container">
+
+            <form id="checkoutForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row g-3">
+                            <h4 class="mb-3">Shipping Info</h4>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="CustomerName" name="CustomerName" required value="@(customerInfo?.FullName)">
+                                @*                            <div class="invalid-feedback">
+                            Please enter your Name.
+                            </div>*@
+                            </div>
+
+                            <div class="col-12">
+                                <label for="CustomerEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="CustomerEmail" name="CustomerEmail" required value="@customerInfo?.Email">
+                                @*                            <div class="invalid-feedback">
+                            Please enter a valid email address for shipping updates.
+                            </div>*@
+                            </div>
+                            <div class="col-12">
+                                <label for="CustomerMobile" class="form-label">Mobile</label>
+                                <input type="text" class="form-control" id="CustomerMobile" name="CustomerMobile" value="@customerInfo?.Phone">
+                                <div class="invalid-feedback">
+                                    Please enter a valid email address for shipping updates.
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="CustomerAddress" class="form-label">Shipping Address</label>
+                                <textarea class="text-area" rows="4" placeholder="Physical address where order will be shipped.." id="CustomerAddress" name="CustomerAddress" required>@customerInfo?.ShippingAddress</textarea>
+                                <div class="invalid-feedback">
+                                    Please enter your shipping address.
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="CustomerComment" class="form-label">Order Notes</label>
+                                <textarea name="CustomerComment" class="input-text " id="CustomerComment" placeholder="Notes about your order, e.g. special notes for delivery." rows="6" cols="5"></textarea>
+                                <div class="invalid-feedback">
+                                    Add a order notes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                @*                            <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="same-address">
+                            <label class="form-check-label" for="same-address">Shipping address is the same as my billing address</label>
+                            </div>*@
+
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="WillSaveInfo" id="WillSaveInfo">
+                                    <label class="form-check-label" for="save-info">Save this information for next time</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="mb-3">Delivery method</h4>
+                                <div class="plans mb-4 mt-3">
+                                @if (deliveryMethod != null)
+                                {
+                                    foreach (var item in deliveryMethod)
+                                    {
+                                        <label class="plan basic-plan" for="@("deliveryMethodRadio" + item.Id)">
+                                            <input @(deliveryMethod.First() == item ? "checked" : "") type="radio" value="@item.Id" charge="@item.Price" name="DeliveryMethod" id="@("deliveryMethodRadio" + item.Id)" />
+                                            <div class="plan-content">
+                                                <div class="plan-details">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <span>@item.Name</span>
+                                                        </div>
+                                                        <div>
+                                                            <span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "d-flex")"><span>@conGen.CurrencySymbol</span><span class="subtotal-value">@item.Price</span></span>
+                                                        </div>
+                                                    </div>
+                                                    <p>@item.Description</p>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h4 class="mb-3">Your orders</h4>
+                    <div class="card rounded-0 border-0" style="background: #f9f9f9;">
+                        <div class="card-body py-5">
+                            <div class="mb-4">
+                                <div class="getcheckoutorderpreview-component">
+                                    <vc:checkout-order-preview></vc:checkout-order-preview>
+                                </div>
+                            </div>
+                            <div>
+                                <hr class="mb-5" />
+                                <h5 class="mb-4">Payment</h5>
+                                <div class="accordion payment-method" id="accordionWithRadioExample_PreChecked">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="form-check">
+                                                <input class="form-check-input" checked="" data-bs-toggle="collapse" data-bs-target="#collapseOne_Payment" value="@PaymentMethod.CashOnDelivery" type="radio" id="customRadio1_Payment" name="PaymentMethod" />
+                                                <label class="form-check-label" for="customRadio1_Payment">@PaymentMethod.CashOnDelivery</label>
+                                            </div>
+                                        </div>
+
+                                        <div id="collapseOne_Payment" class="collapse show" data-bs-parent="#accordionWithRadioExample_PreChecked">
+                                            <div class="card-body">
+                                                <div class="text-secondary">
+                                                    <div class="alert alert-success">
+                                                        Payment will be paid by customer during product shipped.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (conGen.IsStripeEnabled)
+                                    {
+                                        <div class="card">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" data-bs-toggle="collapse" data-bs-target="#collapseTwo_Payment" value="@PaymentMethod.CardPayment" type="radio" id="customRadio2_Payment" name="PaymentMethod" />
+                                                    <label class="form-check-label" for="customRadio2_Payment">
+                                                        @PaymentMethod.CardPayment
+
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <span class="payment_icon" style="margin-left: 5px;">
+                                                        <img src="~/assets/images/payment/visa.svg" height="23" />
+                                                        <img src="~/assets/images/payment/mastercard.svg" height="23" />
+                                                        <img src="~/assets/images/payment/amex.svg" height="23" />
+                                                        <img src="~/assets/images/payment/discover.svg" height="23" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div id="collapseTwo_Payment" class="collapse" data-bs-parent="#accordionWithRadioExample_PreChecked">
+                                                <div class="card-body">
+                                                    <div class="alert alert-success">
+                                                        Enter your card details for make payment.
+                                                    </div>
+                                                    <div class="card border-0 shadow-cus" style="background: #ffffff">
+                                                        <div class="card-body mt-4">
+                                                            <form id="stripform" action="//httpbin.org/post" method="POST">
+                                                                <input type="hidden" name="token" />
+                                                                <div class="form-group mb-2">
+                                                                    <label for="card-element">Card Details</label>
+                                                                    <div id="card-element" class="form-control">
+                                                                        <!-- Stripe Element will be inserted here. -->
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label class="label radio-1">Name On Card</label>
+                                                                    <input type="text" id="full-name" name="first-name" class="form-control" />
+                                                                </div>
+
+                                                                @*<button type="submit" class="btn btn-danger">Pay <span></span></button>*@
+                                                                <div class="outcome">
+                                                                    <div class="error"></div>
+                                                                    @*<div class="success">
+                                                                Success! Your Stripe token is <span class="token"></span>
+                                                                </div>*@
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                    @if (conGen.IsPaypalEnabled)
+                                    {
+                                        <div class="card">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" data-bs-toggle="collapse" data-bs-target="#collapseThree_Payment" value="@PaymentMethod.Paypal" type="radio" id="customRadio3_Payment" name="PaymentMethod" />
+                                                    <label class="form-check-label" for="customRadio3_Payment">
+                                                        @PaymentMethod.Paypal
+
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <span class="payment_icon" style="margin-left: 5px;">
+                                                        <img src="~/assets/images/payment/paypal.svg" height="23" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div id="collapseThree_Payment" class="collapse" data-bs-parent="#accordionWithRadioExample_PreChecked">
+                                                <div class="card-body">
+                                                    <div class="alert alert-success">
+                                                        Click Paypal button for make payment.
+                                                    </div>
+                                                    <div>
+                                                        <div id="paypal-payment-button">
+                                                            <!-- Paypal element will be inserted here. -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-success py-3 rounded-0" id="placeOrder">Place Order</button>
+                                    <a class="btn btn_dark btn-block py-3 rounded-0" asp-action="Index" asp-controller="Shop">Continue Shopping</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+<!-- checkout-section - end
+================================================== -->
+@section Scripts{
+    <script src="https://www.paypal.com/sdk/js?client-id=@paypalClientId&disable-funding=credit"></script>
+    <script>
+        $(function() {
+            $('.form-control').on('blur',
+                function() {
+                    if ($(this).val() != '') {
+                        $(this).removeClass('input-invalid');
+                    }
+                });
+        });
+
+        //$(function(){
+        //    $("#checkoutForm").validate({
+        //      rules: {
+        //        customerName: "required",
+        //        customerEmail: {
+        //          required: true,
+        //          email: true
+        //        }
+        //      },
+        //      messages: {
+        //        customerName: "Please specify your name",
+        //        customerEmail: {
+        //          required: "We need your email address to contact you",
+        //          email: "Your email address must be in the format of name@domain.com"
+        //        }
+        //      }
+        //    });
+        //});
+
+        var paypalOrderDetails;
+        paypal.Buttons({
+            style: {
+                color: 'blue'
+            },
+            onClick: function (data, actions) {
+                //if ($("#checkoutForm").valid()) {
+                //    return actions.resolve();
+                //}
+                //else {
+                //    //$("#checkoutForm").valid();
+                //    swal("Invalid Details!", "Please review all details and try again", "warning");
+                //    return actions.reject();
+                //}
+                var ret = validateCheckout();
+                if (!ret) {
+                    return actions.reject();
+                }
+                return actions.resolve();
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: $('.total-value').text(),
+                            currency_code: '@paypalCurrency',
+                            //breakdown: {
+                            //    item_total: {value: $('.total-value').text(), currency_code: 'USD'}
+                            //}
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    paypalOrderDetails = details;
+                    collectData();
+                    //submitOrderFormViaPayPal();
+                    //console.log(details);
+                });
+            },
+            onCancel: function (data) {
+                swal("Payment Cancelled!", "You cancelled the payment", "warning");
+            }
+        }).render('#paypal-payment-button');
+
+    </script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe('@stripPk');
+        var elements = stripe.elements();
+
+        var style = {
+            base: {
+                // Add your base input styles here. For example:
+                fontSize: '15px',
+                color: '#32325d',
+                fontFamily: "'Roboto', sans-serif",
+                '::placeholder': {
+                    color: '#000000',
+                },
+            },
+        };
+
+
+        var card = elements.create('card', { hidePostalCode: true, style: style }); // Create an instance of the card Element.
+        card.mount('#card-element'); // Add an instance of the card Element into the `card-element` <div>.
+
+
+
+        //var card = elements.create('card', {
+        //    hidePostalCode: true,
+        //    style: {
+        //        base: {
+        //            //iconColor: '#666EE8',
+        //            //color: '#31325F',
+        //            //lineHeight: '40px',
+        //            //fontWeight: 300,
+        //            fontFamily: "'Roboto', sans-serif",
+        //            fontSize: '15px',
+
+        //            //'::placeholder': {
+        //            //    color: '#CFD7E0',
+        //            //},
+        //        },
+        //    }
+        //});
+        //card.mount('#card-element');
+
+        function setOutcome(result) {
+            //var successElement = document.querySelector('.success');
+            var errorElement = document.querySelector('.error');
+            //successElement.classList.remove('visible');
+            errorElement.classList.remove('visible');
+
+            if (result.token != null) {
+                errorElement.textContent = '';
+                // In this example, we're simply displaying the token
+                //successElement.querySelector('.token').textContent = result.token.id;
+                //successElement.classList.add('visible');
+
+                // In a real integration, you'd submit the form with the token to your backend server
+                //var form = document.querySelector('#stripform');
+                document.querySelector('input[name="token"]').setAttribute('value', result.token.id);
+                //console.log($('input[name="token"]').val());
+                //form.submit();
+            } else if (result.error) {
+                errorElement.textContent = result.error.message;
+                errorElement.classList.add('visible');
+            }
+        }
+
+        card.on('change', function (event) {
+            var options = {
+                name: document.getElementById('full-name').value
+            };
+            stripe.createToken(card, options).then(setOutcome);
+            setOutcome(event);
+        });
+
+        //document.querySelector('form').addEventListener('submit', function (e) {
+        //    e.preventDefault();
+        //    var options = {
+        //        name: document.getElementById('full-name').value
+        //    };
+        //    stripe.createToken(card, options).then(setOutcome);
+        //});
+
+    </script>
+
+    <script>
+        $('input[type=radio][name="DeliveryMethod"]').change(function () {
+            calDeliveryCharge();
+            calTotalCharge();
+        });
+
+        $(function () {
+            calDeliveryCharge();
+            calTotalCharge();
+        })
+
+        function calDeliveryCharge() {
+            $('.deliverycharge-value').text($("[name='DeliveryMethod']:checked").attr('charge'));
+        }
+
+        function calTotalCharge() {
+            var delCharge = $('#checkOrderPreview .deliverycharge-value').text();
+            var subTotal = $('#checkOrderPreview .subtotal-value').text();
+            var total = parseFloat(delCharge) + parseFloat(subTotal);
+
+            //console.log("Here goes calculation");
+            //console.log(subTotal);
+            $('.total-value').text(total.toFixed(2));
+        }
+
+
+    </script>
+    <script>
+        function validateCheckout() {
+            if ($("#CustomerName").val() == '') {
+                notifier.open({ type: "error", message: "Full Name Required!" });
+                $("#CustomerName").addClass("input-invalid");
+                return false;
+            }
+            $("#CustomerName").removeClass("input-invalid");
+            if ($("#CustomerEmail").val() == '') {
+                notifier.open({ type: "error", message: "Customer Email Required!" });
+                $("#CustomerEmail").addClass("input-invalid");
+                return false;
+            }
+            $("#CustomerEmail").removeClass("input-invalid");
+            if ($("#CustomerMobile").val() == '') {
+                notifier.open({ type: "error", message: "Customer Mobile Required!" });
+                $("#CustomerMobile").addClass("input-invalid");
+                return false;
+            }
+            $("#CustomerMobile").removeClass("input-invalid");
+            if ($("#CustomerAddress").val() == '') {
+                notifier.open({ type: "error", message: "Full Address Required!" });
+                $("#CustomerAddress").addClass("input-invalid");
+                return false;
+            }
+            $("#CustomerAddress").removeClass("input-invalid");
+        }
+        //Collect data
+        $("#placeOrder").click(function (e) {
+            console.log($("#ShippingAreaId").val());
+            var ret = validateCheckout();
+            if (ret == false) {
+                return;
+            }
+            //swal("Valid!", "Please review all details and try again", "success");
+            //console.log($("#CustomerName").val());
+            //$checkout = $("#checkoutForm");
+            //if (!$checkout.valid()) { // check if form is valid
+            //    swal("Invalid Details!", "Please review all details and try again", "warning");
+            //    return;
+            //}
+            //$("#checkoutForm").addClass('was-validated');
+
+
+            //if ($("#checkoutForm").valid()) {
+            //    swal("Valid!", "Please review all details and try again", "success");
+            //    return false;
+            //}
+            //else {
+            //    //$("#checkoutForm").valid();
+            //    swal("Invalid Details!", "Please review all details and try again", "warning");
+            //    return false;
+            //}
+            //e.preventDefault();
+            collectData();
+        });
+
+        function collectData() {
+            preloader.start();
+            var transactionID, accountName, accountEmail;
+
+            if (paypalOrderDetails) {
+                transactionID = paypalOrderDetails.id;
+                //transactionID = paypalOrderDetails.purchase_units[0].payments.captures[0].id;
+                accountName = paypalOrderDetails.payer.name.given_name + ' ' + paypalOrderDetails.payer.name.surname;
+                accountEmail = paypalOrderDetails.payer.email_address;
+            }
+
+            var stripe = {
+                Token: $("[name='token']").val()
+            };
+            var paypal = {
+                TransactionID: transactionID,
+                AccountName: accountName,
+                AccountEmail: accountEmail,
+            };
+
+            var data = JSON.stringify({
+                DeliveryMethod: $("[name='DeliveryMethod']:checked").val(),
+                PaymentMethod: $("[name='PaymentMethod']:checked").val(),
+                WillSaveInfo: $('[name="WillSaveInfo"]').prop('checked'),
+                CustomerName: $("[name='CustomerName']").val(),
+                CustomerAddress: $("[name='CustomerAddress']").val(),
+                CustomerMobile: $("[name='CustomerMobile']").val(),
+                CustomerEmail: $("[name='CustomerEmail']").val(),
+                CustomerComment: $("[name='CustomerComment']").val(),
+                StripeModel: stripe,
+                PaypalModel: paypal,
+            });
+
+
+            //checkoutOrder(data);
+
+            $.when(checkoutOrder(data)).then(function (response) {
+                response.success == false ? swal("Error Occurred!", response.message, "warning") : location.href = "/order-completed";
+                console.log(response);
+            }).fail(function (err) {
+                console.log(err);
+            });
+            preloader.done();
+        }
+
+        //function downloadInvoice(id){
+        //    location.href = '/order-invoice' + id;
+        //}
+
+        //function orderCompleted(id) {
+        //    $.ajax({
+        //        url: "/order-completed/" + id,
+        //        type: "get",
+        //        dataType: "html",
+        //        success: function (result) {
+        //            $("#order-section").html(result);
+        //        }
+        //    });
+        //}
+
+        function checkoutOrder(data) {
+            var obj = jQuery.parseJSON(data);
+            return $.ajax({
+                url: "/checkout",
+                type: 'POST',
+                data: obj,
+                success: function (result) {
+                    if (result === true) {
+                        swal("Order Success!", "Your order is completed.", "success")
+                            .then((value) => {
+                                //location.href = '/order-completed';
+                            });
+                    } else {
+                        //paypal payment has been completed, there is error on our side so we handle it from here onwards.
+                        console.log("paypal payment has been completed, there is error on our side so we handle it from here onwards.");
+                    }
+                },
+                error: function () {
+                    alert("Error!");
+                }
+            });
+        }
+
+    </script>
+}

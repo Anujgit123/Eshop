@@ -1,0 +1,176 @@
+﻿@{
+    Layout = LayoutPage.ShopLayout;
+    ViewData["Title"] = "Order Completed";
+    var invoice = ViewBag.OrderInvoice as OrderInvoiceDto;
+}
+
+@section Styles{
+
+}
+
+    @*<div class="card border-0 shadow-sm">
+    <div class="card-body">
+    <div class="container">
+    <div class="row justify-content-center">
+    <div class="col-md-8">
+    <div class="text-center order_complete">
+    <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+    <div>
+    <h3>Your order is completed!</h3>
+    </div>
+    <p>Thank you for your order! Your order is being processed and will be completed within 3-6 hours. You will receive an email confirmation when your order is completed.</p>
+    <a href="/" class="btn btn-primary">Continue Shopping</a>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>*@
+
+
+    <!-- breadcrumb_section-start================================================== -->
+    <div class="breadcrumb_section">
+        <div class="container">
+            <ul class="breadcrumb_nav ul_li">
+                <li><a href="index.html">Home</a></li>
+                <li>Order Summary</li>
+            </ul>
+        </div>
+    </div>
+    <!-- breadcrumb_section-end================================================== -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="text-center mt-4">
+                    <h2 class="title_text">Order Completed</h2>
+                    <div>
+                        <img src="/assets/svg/order-completed.svg" style="max-width: 300px" />
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check"></i> <span>Thank you for your order. please download your order invoice by clicking button below.</span>
+                    </div>
+                </div>
+                <h2 class="text-center mt-4">Order Summary</h2>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="py-4 my-4">
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Invoice No.</th>
+                                <td>@invoice.InvoiceNo</td>
+                            </tr>
+                            <tr>
+                                <th>Order On</th>
+                                <td>@invoice.OrderDate</td>
+                            </tr>
+                            <tr>
+                                <th>Payment Method</th>
+                                <td>@invoice.PaymentMethod</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Customer Name</th>
+                                <td>@invoice.CustomerName</td>
+                            </tr>
+                            <tr>
+                                <th>Customer Phone</th>
+                                <td>@invoice.CustomerPhone</td>
+                            </tr>
+                            <tr>
+                                <th>Shipping Address</th>
+                                <td>@invoice.ShippingAddress</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                    @if (invoice.OrderItems != null && invoice.OrderItems.Count() != 0)
+                    {
+                        <table class="table table-bordered">
+                            <thead style="background-color: #ccc;">
+                                <tr>
+                                    <th>Sl.</th>
+                                    <th>Items</th>
+                                    <th>Price</th>
+                                    <th>Qty.</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var sl = 0;
+                                    foreach (var item in invoice.OrderItems)
+                                    {
+                                        sl++;
+                                        <tr>
+                                            <td>@sl</td>
+                                            <td>@item.Item</td>
+                                            <td>@item.UnitPriceWithCurrency</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.TotalWithCurrency</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 offset-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Subtotal</th>
+                            <td>@invoice.Subtotal</td>
+                        </tr>
+                        <tr>
+                            <th>Delivery Charge</th>
+                            <td>@invoice.DeliveryCharge</td>
+                        </tr>
+                        <tr>
+                            <th>Total Amount</th>
+                            <td>@invoice.TotalAmount</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 text-end my-5">
+                    <button onclick="downloadInvoice(@invoice.OrderId)" class="btn btn-secondary py-3 download-invoice">
+                        <i class="fas fa-file-download"></i>
+                        <span>Download Invoice</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+    <script>
+
+        function downloadInvoice(id) {
+            location.href = '/order-invoice/' + id;
+        }
+    </script>
+}

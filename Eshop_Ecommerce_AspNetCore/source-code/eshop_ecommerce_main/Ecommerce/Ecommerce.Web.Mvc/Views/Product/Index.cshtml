@@ -1,0 +1,156 @@
+﻿@*@model PaginatedList<ProductDto>*@
+
+@{
+    ViewData["Title"] = "Product";
+}
+
+@section Styles{
+<style>
+    .table td {
+        vertical-align: top;
+    }
+
+    .product-table tr td img {
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+    }
+</style>
+}
+
+<div class="page-title-box">
+    <h4 class="page-title">Product</h4>
+</div>
+
+
+@*<div class="card mb-4">
+    <div class="card-header">
+        <a asp-action="Create" class="btn btn-soft-primary">Create New</a>
+    </div>
+    <div class="card-body">
+        <div class="my-3 d-flex justify-content-between">
+            <vc:page-size-section action="Index" />
+            <vc:search-section action="Index" />
+        </div>
+        <div class="table-responsive">
+            <table class="table product-table">
+                <thead class="thead-light">
+                    <tr class="sort-section">
+                        <th><vc:item-sort action="Index" sort-column="Name" display-name="Name" /></th>
+                        <th><vc:item-sort action="Index" sort-column="Category" display-name="Category" /></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in products)
+                    {
+                        <tr>
+                            <td>
+                                <img class="me-2" src="@(item.ImagePreview != null? "/" + item.ImagePreview:"/assets/images/no-image.png")" alt="image_not_found">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-link p-0 text-start fw-bold align-top">@item.Name</a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                <a asp-action="Update" asp-controller="Stock" asp-route-id="@item.Id" class="btn btn-link p-0 text-start fw-bold">Manage Stock</a><br>
+                                <a su-delete su-data-action="@Url.Action("Delete")" su-data-id="@item.Id"  href="javascript:void(0)" class="btn btn-link p-0 text-start text-danger fw-bold">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <vc:page-section action="Index" />
+        </div>
+    </div>
+</div>*@
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        @if (AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_Product_Create).Result.Succeeded)
+        {
+            <a asp-action="Create" class="btn btn-soft-primary">Create New</a>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="tblProduct" class="table product-table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th class="all">Name</th>
+                        <th>Category</th>
+                        <th class="all"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+<script type="text/javascript">
+    $(function () {
+
+            suTable = $('#tblProduct').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "responsive": true,
+                "autoWidth": false,
+                "ajax": $.fn.dataTable.pipeline({
+                    url: '@Url.Action("RenderView")',
+                    pages: 5 //number of pages to cache
+                }),
+                "order": [[0, "desc"]],
+                "columnDefs": [
+                    { "targets": [0], "visible": false, "searchable": false },
+                    { "targets": [3], "searchable": false, "orderable": false, "className": "text-end user-action" }
+                ],
+                "columns": [
+                    { "data": "id", "name": "Id" },
+                    {
+                        "data": null,
+                        "name": "Name",
+                        "render": function (data, type, row) {
+                            var myHtml = '';
+                            myHtml += '<img class="me-2" src="'+(row.imagePreview != null? "/" + row.imagePreview:"/assets/images/no-image.png")+'" alt="image_not_found">';
+                            myHtml += '<a href="@Url.Content("/Product/Details")/' + row.id + '" class="btn btn-link p-0 text-start fw-bold align-top">'+row.name+'</a>';
+                            return myHtml;
+                        }
+                    },
+                    { "data": "category", "name": "Category" },
+                    {
+                        'data': null,
+                        'render': function (data, type, row) {
+                            var myHtml = '';
+
+                            @{
+                                if(AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_Inventory_AddStock).Result.Succeeded)
+                                {
+                                        <text>
+                                            myHtml += '<a href="@Url.Content("Stock/Update")/' + row.id + '" class="btn btn-link p-0 text-start fw-bold">Manage Stock</a><br>';
+                                        </text>
+                                }
+                                if(AuthorizationService.AuthorizeAsync(User, Permissions.Permissions_Product_Delete).Result.Succeeded)
+                                {
+                                        <text>
+                                            myHtml += '<a su-delete su-data-id="' + row.id + '" su-data-action="@Url.Action("Delete")"  href="javascript:void(0)" class="btn btn-link p-0 text-start text-danger fw-bold">Delete</a>';
+                                        </text>
+                                }
+                            }
+
+                            return myHtml;
+                        }
+                    }
+                ]
+            });
+        });
+
+
+</script>
+}

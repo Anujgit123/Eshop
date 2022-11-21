@@ -1,0 +1,73 @@
+﻿
+@model IEnumerable<CartDto>
+
+@{
+    decimal totalPrice = 0;
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    
+    <ul class="cart_items_list ul_li_block mb_30 clearfix">
+        @foreach (var item in Model)
+        {
+            totalPrice += (item.Price * @item.Qty);
+            <li cart-summary-item="@item.VariableId">
+                <span hidden>@item.VariableId</span>
+                <div class="item_image">
+                    <img src="@(item.Image != null? "/" + item.Image:"/assets/images/no-image.png")" alt="image_not_found">
+                </div>
+                <div class="item_content">
+                    <h4 class="item_title">@item.Title</h4>
+                    <span class="item_price d-inline-block mr-3">
+                        <span style="display: inline-block"><span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span>@conGen.CurrencySymbol</span><span>@item.Price</span></span></span>
+                        <span>x</span>
+                        <span class="">@item.Qty</span>
+                    </span>
+                    <div class="d-inline-block">
+                        <button type="button" class="input_number_btn" onclick="ItemDecrement('@item.VariableId')">
+                            <i class="fal fa-minus"></i>
+                        </button>
+                        <button type="button" class="input_number_btn" onclick="ItemIncrement('@item.VariableId')">
+                            <i class="fal fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="remove_btn cart-summary-remove" onclick="CartItemRemove('@item.VariableId')"><i class="fal fa-trash-alt"></i></button>
+            </li>
+        }
+    </ul>
+
+    <ul class="total_price ul_li_block mb_30 clearfix">
+        <li>
+            <span>Subtotal:</span>
+            <span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span>@conGen.CurrencySymbol</span><span>@totalPrice</span></span>
+        </li>
+        @*<li>
+            <span>Vat 5%:</span>
+            <span>$4.5</span>
+        </li>*@
+        <li>
+            <span>Delivery Charge:</span>
+            <span>0.00</span>
+        </li>
+        <li>
+            <span>Total:</span>
+            <span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span>@conGen.CurrencySymbol</span><span>@totalPrice</span></span>
+        </li>
+    </ul>
+    <ul class="btns_group ul_li_block clearfix">
+        <li><a class="btn btn_primary" asp-action="Index" asp-controller="Cart">View Cart</a></li>
+        <li><a class="btn btn_secondary" href="/checkout">Checkout</a></li>
+    </ul>
+
+}
+else
+{
+    <div class="text-center">
+        <span>Cart is Empty!</span>
+    </div>
+}
+
+

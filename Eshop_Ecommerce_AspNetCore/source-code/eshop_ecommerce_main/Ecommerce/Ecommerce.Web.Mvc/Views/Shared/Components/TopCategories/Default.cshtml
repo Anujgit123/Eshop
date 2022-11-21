@@ -1,0 +1,31 @@
+﻿@model IEnumerable<TopCategoriesConfigurationDto>
+@{
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div class="sec-title-link">
+        <h3>Top categories</h3>
+    </div>
+    <div class="top_category_carousel2" data-slick='{"dots": false}'>
+        @foreach (var item in Model)
+        {
+            <div class="slider_item">
+                <div class="category_boxed">
+                    <a href="shop/@item.Slug">
+                        <span class="item_image">
+                            <img src="@(item.Image != null ? "/" + item.Image : "/assets/images/no-image.png")" alt="image_not_found">
+                        </span>
+                        <span class="item_title">@item.Title</span>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="carousel_nav carousel-nav-top-right">
+        <button type="button" class="tc_left_arrow"><i class="fal fa-long-arrow-alt-left"></i></button>
+        <button type="button" class="tc_right_arrow"><i class="fal fa-long-arrow-alt-right"></i></button>
+    </div>
+}
+

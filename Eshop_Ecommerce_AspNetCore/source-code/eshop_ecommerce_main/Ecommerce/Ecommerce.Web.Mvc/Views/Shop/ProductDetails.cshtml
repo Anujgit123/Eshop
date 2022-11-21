@@ -1,0 +1,588 @@
+﻿@model ProductDetailsDto
+
+
+@{
+    ViewData["Title"] = Model.Name;
+    Layout = LayoutPage.ShopLayout;
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+    StockConfigurationDto conStock = JsonSerializer.Deserialize<StockConfigurationDto>(K["StockConfiguration"]);
+    var isOutOfStockNotificationEnabled = conStock?.IsOutOfStockNotificationEnabled.ToString().ToLower();
+    var isLowStockNotificationEnabled = conStock?.IsLowStockNotificationEnabled.ToString().ToLower();
+}
+
+@section Styles{
+    <link rel="stylesheet" type="text/css" href="~/lib/glider-js/glider.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/others/css/rating.css" />
+    <style>
+        #product-main-image {
+            border: 2px solid #cccccc42;
+            background: #fff;
+            text-align: center;
+        }
+
+            #product-main-image img {
+                width: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+
+        #varient-image-gallery {
+            position: relative;
+        }
+
+            #varient-image-gallery img {
+                border: 2px solid #ffffff00;
+                box-shadow: 0 0 4px #ccc;
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                cursor: pointer;
+                transition: transform .4s;
+                margin: 5px;
+            }
+
+                #varient-image-gallery img:hover {
+                    transform: scale(1.05);
+                }
+
+        .glider-slide {
+            user-select: none;
+            justify-content: center;
+            align-content: center;
+            width: 100%;
+            min-width: 100px;
+        }
+
+
+        .glider-next, .glider-prev {
+            font-size: 25px;
+            top: 38%;
+            left: 15px;
+        }
+
+        .glider-next {
+            right: 15px;
+            left: auto;
+        }
+
+        .select-color {
+            box-shadow: 0 0 3px 3px #2196f3 !important;
+        }
+
+        .image-selected {
+            border: 2px solid #2196f3 !important;
+        }
+
+        @@media (max-width: 575.98px) {
+            #product-main-image img {
+                height: 380px;
+            }
+        }
+
+        @@media (min-width: 767.98px) {
+            #product-main-image img {
+                height: 480px;
+            }
+        }
+
+        @@media (min-width: 991.98px) {
+            #product-main-image img {
+                height: 550px;
+            }
+        }
+
+        @@media (min-width: 1199.98px) {
+            #product-main-image img {
+                height: 650px;
+            }
+        }
+
+    </style>
+}
+
+    <div>
+        <vc:category-bread-cumb option="@(new BreadCumbOptionsVM { Slug = ViewBag.SelectedCategorySlug, IsLastLink = true } )" />
+    </div>
+
+    <!-- product_details - start
+            ================================================== -->
+    <section class="product_details section_space">
+        <div class="container">
+            <div class="row">
+                <div class="col col-lg-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="product-main-image">
+                                <img src="@(Model.ProductImagePreview != null? "/" + Model.ProductImagePreview:"/assets/images/no-image.png")" />
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div id="varient-image-gallery" class="my-2">
+                                <div>
+                                    <div class="glider">
+                                    @if (Model.ProductImagePreview != null)
+                                    {
+                                        <img src="@("/" + Model.ProductImagePreview)" />
+                                    }
+                                    @foreach (var item in Model.Varient)
+                                    {
+                                        if (item.VarientImagePreview != null)
+                                        {
+                                            <img src="@("/" + @item.VarientImagePreview)" su-variant-image="@item.Id" />
+                                        }
+                                    }
+                                </div>
+                                <button role="button" aria-label="Previous" class="glider-prev"><i class="fa fa-chevron-left"></i></button>
+                                <button role="button" aria-label="Next" class="glider-next"><i class="fa fa-chevron-right"></i></button>
+                                <div role="tablist" class="dots"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="product_details_content">
+                    <h2 class="item_title">@Model.Name</h2>
+                    <p>
+                        @Html.Raw(Model.ShortDescription)
+                    </p>
+                    @if (Model.CustomerReviews != null && Model.CustomerReviews.Any())
+                    {
+                        <div class="item_review">
+                            <ul class="rating_star ul_li">
+                                @{
+                                    var rateSummary = Model.CustomerReviews.Select(o => o.Rating).Sum() / Model.CustomerReviews.Count();
+                                    for (var i = 0; i < 5; i++)
+                                    {
+                                        if (rateSummary > 0)
+                                        {
+                                            <li><i class="fas fa-star"></i></li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="far fa-star"></i></li>
+                                        }
+                                        rateSummary--;
+                                    }
+                                }
+                            </ul>
+                            <span class="review_value">@Model.CustomerReviews.Count() Rating(s)</span>
+                        </div>
+                    }
+
+
+                    <div class="item_price">
+                        <span class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"><span class="me-0">@conGen.CurrencySymbol</span><span class="product-price me-0">@Model.Price</span></span>
+                        @*<del>$720.00</del>*@
+                    </div>
+                    <div class="mt-2 mb-4">
+                        <!-- Stock Status (In Stock/Stock Low/Out Of Stock)-->
+                        <div class="stock-status"></div>
+                    </div>
+
+                    @if (Model.VariableTheme != null)
+                    {
+                        <div class="item_attribute">
+                            @*<h3 class="title_text">Options <span class="underline"></span></h3>*@
+                            @if (Model.VariableTheme == ProductVarientTheme.ColorSize)
+                            {
+                                <div class="row size-block">
+                                    <div class="col col-md-6">
+                                        <div class="select_option clearfix">
+                                            <h4 class="input_title">Size *</h4>
+                                            <select class="product-size-dropdown nice-select" su-size-filter asp-items="ViewBag.SizeId" id="SizeId">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row color-block">
+                                    <div class="col col-md-6">
+                                        <div class="clearfix">
+                                            <h4 class="input_title">Color *</h4>
+                                            @for (int i = 0; i < Model.AvailableColorVarient.Count(); i++)
+                                            {
+                                                <div class="d-inline-block @(i == 0?"select-color":"")" su-color-filter="@Model.AvailableColorVarient[i].Id" style=" background: @Model.AvailableColorVarient[i].HexCode; height: 20px; width: 20px; margin-right: 8px; box-shadow: 0 0 3px #808080; border: 2px solid #fff; cursor: pointer;"></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.VariableTheme == ProductVarientTheme.Size)
+                            {
+                                <div class="row size-block">
+                                    <div class="col col-md-6">
+                                        <div class="select_option clearfix">
+                                            <h4 class="input_title">Size *</h4>
+                                            <select class="product-size-dropdown nice-select" su-size-filter asp-items="ViewBag.SizeId" id="SizeId"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.VariableTheme == ProductVarientTheme.Color)
+                            {
+                                <div class="row color-block">
+                                    <div class="col col-md-6">
+                                        <div class="clearfix">
+                                            <h4 class="input_title">Color *</h4>
+                                            @for (int i = 0; i < Model.AvailableColorVarient.Count(); i++)
+                                            {
+                                                <div class="d-inline-block @(i == 0?"select-color":"")" su-color-filter="@Model.AvailableColorVarient[i].Id" style="background: @Model.AvailableColorVarient[i].HexCode; height: 20px; width: 20px; margin-right: 8px; box-shadow: 0 0 3px #808080; border: 2px solid #fff; cursor: pointer; "></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @*<span class="repuired_text">Repuired Fiields *</span>*@
+                        </div>
+                    }
+
+
+                    <div class="quantity_wrap">
+                        <form action="#">
+                            <div class="quantity_input">
+                                <button type="button" class="input_number_decrement">
+                                    <i class="fal fa-minus"></i>
+                                </button>
+                                <input class="input_number" id="qty" type="text" value="1" min="1" readonly disabled>
+                                <button type="button" class="input_number_increment">
+                                    <i class="fal fa-plus"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <ul class="default_btns_group ul_li">
+                        <li><a class="btn btn_primary addtocart_btn" href="javascript:void(0)" id="addToCart" product-varientId="@Model.FeatureVarient.Id">Add To Cart</a></li>
+                        @*<li><a href="#!"><i class="fas fa-heart"></i></a></li>*@
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="details_information_tab">
+            <ul class="tabs_nav nav ul_li" role="tablist">
+                <li>
+                    <button class="active" data-bs-toggle="tab" data-bs-target="#description_tab" type="button" role="tab" aria-controls="description_tab" aria-selected="true">
+                        Description
+                    </button>
+                </li>
+                <li>
+                    <button data-bs-toggle="tab" data-bs-target="#reviews_tab" type="button" role="tab" aria-controls="reviews_tab" aria-selected="false">
+                        Reviews(@((Model.CustomerReviews != null && Model.CustomerReviews.Count() > 0) ? Model.CustomerReviews.Count() : 0))
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="description_tab" role="tabpanel">
+                    @Html.Raw(Model.Description)
+                </div>
+
+                <div class="tab-pane fade" id="reviews_tab" role="tabpanel">
+                    <div class="customer_reviews">
+                        <h4 class="reviews_tab_title">@((Model.CustomerReviews != null && Model.CustomerReviews.Count() > 0) ? Model.CustomerReviews.Count() : 0) reviews for this product</h4>
+                        @if (Model.CustomerReviews != null && Model.CustomerReviews.Count() > 0)
+                        {
+                            foreach (var item in Model.CustomerReviews)
+                            {
+                                <div class="customer_review_item clearfix mt-4">
+                                    <div class="customer_content border-bottom pb-5">
+                                        <div class="item_review">
+                                            <ul class="rating_star ul_li">
+                                                @{
+                                                    var rate = item.Rating;
+                                                    for (var i = 0; i < 5; i++)
+                                                    {
+                                                        if (rate > 0)
+                                                        {
+                                                            <li><i class="fas fa-star"></i></li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li><i class="far fa-star"></i></li>
+                                                        }
+                                                        rate--;
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div class="customer_info my-0">
+                                            <h4 class="customer_name mx-0 me-2">@item.CustomerName</h4>
+                                            <span class="comment_date">@String.Format("{0:MMM dd, yyy}",item.DateCommented)</span>
+                                        </div>
+                                        <p class="mb-0">@item.Comment</p>
+                                        @if (@item.Reply != null)
+                                        {
+                                            <div class="card my-2 border-0">
+                                                <div class="card-body bg-light">
+                                                    <span class="mx-0 d-block" style="font-size: 1.1em;color: #dc3545"><i class="far fa-comment-dots"></i> Respond from store</span>
+                                                    <p class="mb-0">@item.Reply</p>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="customer_review_form">
+                            <h4 class="reviews_tab_title">Add a review</h4>
+                            <p>
+                                Add your rating and leave comment
+                            </p>
+                            <form asp-action="AddCustomerRating" asp-controller="ProductReview" method="post">
+                                <div class='rating-widget'>
+                                    <!-- Rating Stars Box -->
+                                    <div class='rating-stars'>
+                                        <ul id='stars'>
+                                            <li class='star' title='Poor' data-value='1'>
+                                                <i class='fa fa-star fa-fw'></i>
+                                            </li>
+                                            <li class='star' title='Fair' data-value='2'>
+                                                <i class='fa fa-star fa-fw'></i>
+                                            </li>
+                                            <li class='star' title='Good' data-value='3'>
+                                                <i class='fa fa-star fa-fw'></i>
+                                            </li>
+                                            <li class='star' title='Excellent' data-value='4'>
+                                                <i class='fa fa-star fa-fw'></i>
+                                            </li>
+                                            <li class='star' title='WOW!!!' data-value='5'>
+                                                <i class='fa fa-star fa-fw'></i>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="form_item" hidden>
+                                    <input type="number" name="Rating" />
+                                    <input type="number" name="ProductId" value="@Model.ProductId" />
+                                </div>
+                                <div class="form_item">
+                                    <textarea name="Comment" placeholder="Your Review*"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn_primary">Submit Now</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- product_details - end
+================================================== -->
+@section Scripts{
+    <script src="~/lib/glider-js/glider.min.js"></script>
+    <script src="~/others/js/rating.js"></script>
+    <script>
+        var id = @Html.Raw(ViewBag.ProductId);
+        var color = "";
+        var size = "";
+        //var size = null;
+        var variable = null;
+        //var selectsizeoption = '<option value="">Select Size</option>';
+
+
+        if ($(".size-block").length != 0) {
+            size = $(".product-size-dropdown").val()
+            if ($(".color-block").length != 0) {
+                color = $(".select-color").attr("su-color-filter");
+                filterSizebyColor(id, color);
+            } else {
+                filterData(id, color, size);
+            }
+        }
+
+        if ($(".color-block").length != 0) {
+            color = $(".select-color").attr("su-color-filter");
+            filterSizebyColor(id, color);
+        }
+
+
+        function filterSizebyColor(id, color) {
+            $.ajax({
+                url: "/filtersizebycolor/" + id + "?color=" + color,
+                type: 'GET',
+                dataType: 'json', // added data type
+                success: function (result) {
+                    //console.log(result);
+                    var options = "";
+                    if (result != null) {
+                        $.each(result, function () {
+                            options += '<option value="' + this.sizeId + '">' + this.name + '</option>';
+                        });
+                    }
+
+                    $(".product-size-dropdown").html(options);
+                    $('select').niceSelect('update');
+
+                    var color = $(".select-color").attr("su-color-filter");
+                    var size = $(".product-size-dropdown").val() == null ? "" : $(".product-size-dropdown").val();
+                    if ($(".product-size-dropdown").val() !== "" || $(".product-size-dropdown").val() !== "undefined") {
+                        filterData(id, color, size);
+
+                    }
+
+
+
+                    //$(".product-size-dropdown option").each(function () {
+                    //    var isAvailable = findValueInArray(result, $(this).val());
+                    //    if (isAvailable == true) {
+                    //        $(this).removeAttr('disabled');
+                    //    } else {
+                    //        if ($(this).val() != "") {
+                    //            $(this).attr('disabled', 'disabled');
+                    //        }
+
+                    //    }
+                    //    // Add $(this).val() to your list
+                    //});
+                },
+                error: function (e) {
+                    alert("Error!" + e);
+                }
+            });
+        }
+
+
+        //function findValueInArray(arr, value) {
+        //    var result = false;
+        //    for (var i = 0; i < arr.length; i++) {
+        //        var name = arr[i];
+        //        if (name == value) {
+        //            result = true;
+        //            break;
+        //        }
+        //    }
+        //    return result;
+        //}
+
+        $(document).on('click', '[su-color-filter]', function () {
+            $('[su-color-filter]').removeClass('select-color');
+            $(this).addClass('select-color');
+            var color = $(this).attr("su-color-filter");
+            var size = $(".product-size-dropdown").val();
+            //console.log(id, color, size);
+
+            filterSizebyColor(id, color);
+            //$.when(filterSizebyColor(id, color, '')).done(function () {
+            //    filterData(id, color, size);
+            //});
+
+        });
+
+        $(document).on('change', '[su-size-filter]', function () {
+            var size = $(this).val();
+            var color = $(".select-color").attr("su-color-filter");
+            color = color == null ? null : color;
+            filterData(id, color, size);
+        });
+
+
+        function filterData(id, color, size) {
+            $.ajax({
+                url: "/filterdetails/" + id + "?color=" + color + "&size=" + size,
+                type: 'GET',
+                async: false,
+                dataType: 'json', // added data type
+                success: function (result) {
+                    if (result != null) {
+                        $(".product-sku").html('<span class="text-dark">SKU: </span>' + result.sku);
+                        $(".product-price").html(result.price);
+                        $("#addToCart").attr("product-varientId", result.varientId);
+                        $('#product-main-image img').attr('src', '/' + result.varientImage);
+
+                        $(".input_number").val(1);
+                        $(".stock-status").html('');
+                        $("#addToCart").removeClass("disabled");
+                        $(".input_number_increment").removeClass("disabled");
+                        $(".input_number_decrement").removeClass("disabled");
+
+                        if (result.quantity <= @conStock.OutOfStockThreshold) {
+                            if (@isOutOfStockNotificationEnabled) {
+                                $(".stock-status").html('<span class="text-danger fw-bold">Out of stock</span>');
+                            }
+
+                            $("#addToCart").addClass("disabled");
+                            $(".input_number_increment").addClass("disabled");
+                            $(".input_number_decrement").addClass("disabled");
+                        } else if (result.quantity <= @conStock.LowStockThreshold && @isLowStockNotificationEnabled) {
+                            $(".stock-status").html('<span class="text-warning fw-bold">Only ' + result.quantity + ' available</span>');
+                        } else {
+                            $(".stock-status").html('<span class="text-success fw-bold">In Stock</span>');
+                        }
+                    }
+                },
+                error: function (e) {
+                    alert("Error!" + e);
+                }
+            });
+        }
+
+        $(document).on('click', '#addToCart', function () {
+            var data = JSON.stringify({
+                VariableId: $(this).attr("product-varientId"),
+                Qty: $('#qty').val()
+            });
+
+            var obj = jQuery.parseJSON(data);
+            return $.ajax({
+                url: "/addtocart",
+                type: 'POST',
+                data: obj,
+                success: function (result) {
+                    //console.log(result);
+                    CartCount();
+                    CartSummary();
+                    notifier.open({ type: "info", message: "Item Added to Cart" });
+                    //location.reload();
+                },
+                error: function () {
+                    alert("Error!");
+                }
+            });
+        });
+
+
+        //image-slider-start
+        $(document).on('click', '#varient-image-gallery img', function () {
+            $('#varient-image-gallery img').removeClass('image-selected');
+            $(this).addClass('image-selected');
+            var selectedImage = $(this).attr("src");
+            $('#product-main-image img').attr('src', selectedImage);
+            //console.log(selectedImage);
+        });
+
+        new Glider(document.querySelector('.glider'), {
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            draggable: true,
+            arrows: {
+                prev: '.glider-prev',
+                next: '.glider-next'
+            },
+            //dots: '.dots'
+        })
+        //image-slider-end
+
+        $(document).ready(function () {
+            $('#varient-image-gallery img').each(function () {
+                var h = $(this).width();
+                $(this).css('height', h);
+            });
+        });
+
+    </script>
+}

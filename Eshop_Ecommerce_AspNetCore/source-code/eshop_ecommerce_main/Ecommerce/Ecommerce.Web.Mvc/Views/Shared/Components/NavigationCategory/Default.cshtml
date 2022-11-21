@@ -1,0 +1,83 @@
+﻿@{ var categoryList = ViewBag.NavCategory as IEnumerable<NavCategoryVM>; }
+
+@*<div>
+    <div class="dropdown" id="bootnavbar">
+        <button class="btn btn-info dropdown-toggle px-4" type="button" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background: #eba43c; border: 1px solid #eba43c; ">
+            Categories
+        </button>
+        
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            @await Html.PartialAsync("_SubCategory", categoryList)
+        </ul>
+    </div>
+</div>*@
+
+
+
+<div class="menu">
+    <nav id="stack-menu">
+        <ul>
+            @await Html.PartialAsync("_SubCategory", categoryList)
+            @*<li class="moreless-button-li"><a href="#" class="moreless-button d-flex justify-content-between align-items-center"><span>Show More</span><i class="fa fa-plus"></i></a></li>*@
+        </ul>
+        <div class="moreless-button moreless-button-hidden d-flex justify-content-between align-items-center" style="padding: 10px 20px; cursor: pointer; border-top: 1px solid #efefef; color: #3e97dd;"><span>Show More</span><i class="fa fa-plus"></i></div>
+    </nav>
+</div>
+
+
+
+
+
+
+
+@*<div class="menu">
+    <nav id="stack-menu">
+        <ul>
+            <li>
+                <a href="#">Main Menu 1</a>
+                <ul>
+                    <li><a href="#">Submenu 1.1</a></li>
+                    <li>
+                        <a href="#">Submenu 1.2</a>
+                        <ul>
+                            <li><a href="#">Submenu 1.2.1</a></li>
+                            <li><a href="#">Submenu 1.2.2</a></li>
+                            <li><a href="#">Submenu 1.2.3</a></li>
+                            <li><a href="#">Submenu 1.2.4</a></li>
+                            <li>
+                                <a href="#">Submenu 1.2.5</a>
+                                <ul>
+                                    <li><a href="#">Submenu 1.2.5.1</a></li>
+                                    <li><a href="#">Submenu 1.2.5.2</a></li>
+                                    <li><a href="#">Submenu 1.2.5.3</a></li>
+                                    <li><a href="#">Submenu 1.2.5.4</a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li><a href="#">Submenu 1.3</a></li>
+                    <li><a href="#">Submenu 1.4</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Main Menu 2</a>
+                <ul>
+                    <li><a href="#">Similique</a></li>
+                    <li><a href="#">Distinctio</a></li>
+                    <li><a href="#">Porro</a></li>
+                    <li><a href="#">Illum</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Main Menu 3</a></li>
+            <li>
+                <a href="#">Main Menu 4</a>
+                <ul>
+                    <li><a href="#">Quod</a></li>
+                    <li><a href="#">Provident</a></li>
+                    <li><a href="#">Cumque</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>*@

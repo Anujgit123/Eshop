@@ -1,0 +1,190 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap@5.1.3",
+      "destination": "wwwroot/lib/bootstrap/",
+      "files": [
+        "js/bootstrap.min.js",
+        "css/bootstrap.min.css",
+        "js/bootstrap.bundle.min.js"
+      ]
+    },
+    {
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot/lib/jquery/",
+      "files": [
+        "jquery.min.js"
+      ]
+    },
+    {
+      "library": "jquery-validate@1.19.3",
+      "destination": "wwwroot/lib/jquery-validate/",
+      "files": [
+        "jquery.validate.min.js"
+      ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.12",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/",
+      "files": [
+        "jquery.validate.unobtrusive.min.js"
+      ]
+    },
+    {
+      "library": "font-awesome@5.15.4",
+      "destination": "wwwroot/lib/font-awesome/",
+      "files": [
+        "css/all.min.css",
+        "webfonts/fa-brands-400.eot",
+        "webfonts/fa-brands-400.svg",
+        "webfonts/fa-brands-400.ttf",
+        "webfonts/fa-brands-400.woff",
+        "webfonts/fa-brands-400.woff2",
+        "webfonts/fa-regular-400.eot",
+        "webfonts/fa-regular-400.svg",
+        "webfonts/fa-regular-400.ttf",
+        "webfonts/fa-regular-400.woff",
+        "webfonts/fa-regular-400.woff2",
+        "webfonts/fa-solid-900.eot",
+        "webfonts/fa-solid-900.svg",
+        "webfonts/fa-solid-900.ttf",
+        "webfonts/fa-solid-900.woff",
+        "webfonts/fa-solid-900.woff2",
+        "js/all.js"
+      ]
+    },
+    {
+      "library": "dropzone@5.9.3",
+      "destination": "wwwroot/lib/dropzone/",
+      "files": [
+        "min/dropzone.min.js",
+        "min/dropzone.min.css"
+      ]
+    },
+    {
+      "library": "sweetalert@2.1.2",
+      "destination": "wwwroot/lib/sweetalert/",
+      "files": [
+        "sweetalert.min.js"
+      ]
+    },
+    {
+      "library": "OwlCarousel2@2.3.4",
+      "destination": "wwwroot/lib/OwlCarousel2/",
+      "files": [
+        "owl.carousel.min.js",
+        "assets/owl.theme.default.min.css",
+        "assets/owl.carousel.min.css"
+      ]
+    },
+    {
+      "library": "tinymce@5.10.2",
+      "destination": "wwwroot/lib/tinymce/",
+      "files": [
+        "tinymce.min.js",
+        "jquery.tinymce.min.js"
+      ]
+    },
+    {
+      "library": "summernote@0.8.20",
+      "destination": "wwwroot/lib/summernote/",
+      "files": [
+        "summernote.min.js",
+        "summernote-bs5.min.css",
+        "summernote-bs5.min.js",
+        "summernote-lite.css",
+        "summernote-lite.js",
+        "summernote.min.css",
+        "font/summernote.eot",
+        "font/summernote.ttf",
+        "font/summernote.woff",
+        "font/summernote.woff2"
+      ]
+    },
+    {
+      "library": "glider-js@1.7.7",
+      "destination": "wwwroot/lib/glider-js/",
+      "files": [
+        "glider.min.js",
+        "glider.min.css"
+      ]
+    },
+    {
+      "library": "datatables.net-bs5@1.11.4",
+      "destination": "wwwroot/lib/datatables.net/",
+      "files": [
+        "dataTables.bootstrap5.min.js",
+        "dataTables.bootstrap5.min.css"
+      ]
+    },
+    {
+      "library": "datatables-responsive@2.2.9",
+      "destination": "wwwroot/lib/datatables.net/",
+      "files": [
+        "dataTables.responsive.min.js"
+      ]
+    },
+    {
+      "library": "datatables-buttons@2.2.2",
+      "destination": "wwwroot/lib/datatables-buttons/",
+      "files": [
+        "js/dataTables.buttons.min.js",
+        "js/buttons.html5.min.js",
+        "js/buttons.print.min.js",
+        "js/buttons.colVis.min.js"
+      ]
+    },
+    {
+      "library": "datatables.net-buttons-bs5@2.2.2",
+      "destination": "wwwroot/lib/datatables-buttons/",
+      "files": [
+        "buttons.bootstrap5.min.js",
+        "buttons.bootstrap5.min.css"
+      ]
+    },
+    {
+      "library": "datatables.net-responsive-bs5@2.2.9",
+      "destination": "wwwroot/lib/datatables.net/",
+      "files": [
+        "responsive.bootstrap5.min.js",
+        "responsive.bootstrap5.min.css"
+      ]
+    },
+    {
+      "library": "datatables.net@1.11.4",
+      "destination": "wwwroot/lib/datatables.net/",
+      "files": [
+        "jquery.dataTables.min.js"
+      ]
+    },
+    {
+      "library": "dayjs@1.10.8",
+      "destination": "wwwroot/lib/dayjs/",
+      "files": [
+        "dayjs.min.js"
+      ]
+    },
+    {
+      "library": "flatpickr@4.6.10",
+      "destination": "wwwroot/lib/flatpickr/",
+      "files": [
+        "flatpickr.min.js",
+        "flatpickr.min.css"
+      ]
+    },
+    {
+      "library": "html2pdf.js@0.10.1",
+      "destination": "wwwroot/lib/html2pdf.js/"
+    },
+    {
+      "library": "jquery-nice-select@1.1.0",
+      "destination": "wwwroot/lib/jquery-nice-select/",
+      "files": [
+        "js/jquery.nice-select.min.js",
+        "css/nice-select.min.css"
+      ]
+    }
+  ]
+}

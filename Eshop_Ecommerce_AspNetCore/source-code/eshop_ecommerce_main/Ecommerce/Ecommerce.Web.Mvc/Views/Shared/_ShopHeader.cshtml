@@ -1,0 +1,170 @@
+﻿@{
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+    var roles = User.GetRoles();
+}
+
+<header class="header_section header-style-3">
+    <div class="header_top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col col-md-6">
+                    <ul class="header_select_options ul_li">
+                        <li>
+                            <div class="select_option">
+                                <h3 class="title_text text-dark">Currency: <strong>@conGen.CurrencySymbol</strong></h3>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col col-md-6">
+                    <p class="header_hotline text-dark"><i class="fas fa-phone-volume"></i> Call us: <strong class="text-dark">@conGen.CompanyContact</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header_middle">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col col-lg-3 col-md-3 col-sm-12">
+                    <div class="brand_logo">
+                        <a class="brand_link" href="/">
+                            @if (conGen.CompanyLogo != null)
+                            {
+                                <img src="/@conGen.CompanyLogo" height="20" />
+                            }
+                            else
+                            {
+                                <span style="font-weight: bolder; font-size: 1.8em; color: #051d43;">@conGen.CompanyName</span>
+                            }
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col col-lg-6 col-md-6 col-sm-12">
+                    <form action="#">
+                        <div class="advance_serach" style="position: relative;">
+                            <div class="form_item">
+                                <input type="search" name="search" placeholder="Search Products..." id="productSearch">
+                                <button type="button" class="search_btn"><i class="far fa-search"></i></button>
+                            </div>
+
+                            <div id="productSearchResult" class="d-down scroll-cus">
+                                @*<a href="#">
+                                    <div class="d-flex justify-content-start">
+                                    <div>
+                                    <img src="/images/5c564a30-4970-422f-ba75-b669d95d4172.jpg">
+                                    </div>
+                                    <div class="d-flex align-items-start flex-column ms-2">
+                                    <span class="d-block text-dark">This is a product items.</span>
+                                    <span class="fw-bold">300</span>
+                                    </div>
+                                    </div>
+                                    </a>*@
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="col col-lg-3 col-md-3 col-sm-12">
+                    <button class="mobile_menu_btn2 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_menu_dropdown" aria-controls="main_menu_dropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fal fa-bars"></i>
+                    </button>
+
+                    <button type="button" class="cart_btn">
+                        <span class="cart_icon">
+                            @*<i class="icon icon-ShoppingCart"></i>*@
+                            <i class="fas fa-shopping-bag"></i>
+                            <small class="cart_counter total-cart-item"><vc:cart-count></vc:cart-count></small>
+                        </span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="header_bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col col-md-3">
+                    <div class="allcategories_dropdown">
+                        <button class="allcategories_btn" type="button" data-bs-toggle="collapse" data-bs-target="#allcategories_collapse" aria-expanded="false" aria-controls="allcategories_collapse">
+                            <svg role="img" xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewbox="0 0 24 24" aria-labelledby="statsIconTitle" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" color="#000"> <title id="statsIconTitle">Stats</title> <path d="M6 7L15 7M6 12L18 12M6 17L12 17"></path> </svg>
+                            Browse categories
+                        </button>
+                        <div class="allcategories_collapse collapse" id="allcategories_collapse">
+                            <div class="card card-body">
+                                <vc:navigation-category></vc:navigation-category>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col col-md-6">
+                    <nav class="main_menu navbar navbar-expand-lg">
+                        <div class="main_menu_inner collapse navbar-collapse" id="main_menu_dropdown">
+                            <button type="button" class="offcanvas_close">
+                                <i class="fal fa-times"></i>
+                            </button>
+                            <ul class="main_menu_list ul_li">
+                                <li>
+                                    <a class="nav-link" href="/">Home</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Shop" asp-action="Index">Shop</a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link" href="#" id="pages_submenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Pages </a>
+                                    <ul class="submenu dropdown-menu" aria-labelledby="pages_submenu">
+                                        <li><a asp-action="Index" asp-controller="Cart">Cart</a></li>
+                                        <li><a href="/checkout">Checkout</a></li>
+                                    </ul>
+                                </li>
+                                <li><a class="nav-link" asp-controller="ContactQuery" asp-action="Send">Contact Us</a></li>
+                                <li><a class="nav-link" asp-controller="TrackOrder" asp-action="Index">Track</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+
+                    <div class="offcanvas_overlay"></div>
+                </div>
+
+                <div class="col col-md-3">
+                    <ul class="header_icons_group ul_li_right">
+                        <li>
+                            <a asp-controller="TrackOrder" asp-action="Index"><i class="fas fa-map-marker-alt"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a id="pages_account" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user"></i></a>
+                            <ul class="user-submenu dropdown-menu pt-3" aria-labelledby="pages_account">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    @if (roles.Count() != 0 && (!User.IsInRole(DefaultApplicationRoles.Customer) || roles.Count() > 1))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                                    }
+                                    @if (User.IsInRole(DefaultApplicationRoles.Customer))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="My" asp-action="Index">My Account</a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" asp-controller="My" asp-action="Login">Login</a></li>
+                                    <li><a class="dropdown-item" asp-controller="My" asp-action="Register">Register</a></li>
+                                }
+                            </ul>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

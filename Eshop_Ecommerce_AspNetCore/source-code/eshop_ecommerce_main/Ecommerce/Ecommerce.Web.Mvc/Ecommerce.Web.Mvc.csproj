@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+	  <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!--<StartupObject></StartupObject>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+    <!--<PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />-->
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0">
+	    <NoWarn>NU1605</NoWarn>
+    </PackageReference>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ecommerce.Application\Ecommerce.Application.csproj" />
+    <ProjectReference Include="..\Ecommerce.Infrastructure\Ecommerce.Infrastructure.Sql.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ReportDataSet\" />
+    <Folder Include="wwwroot\filestores\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\report\rdlc\Invoice.rdlc">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

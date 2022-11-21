@@ -1,0 +1,86 @@
+﻿@model IEnumerable<CustomerOrderDto>
+
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = LayoutPage.ShopLayout;
+    var customerReviews = ViewBag.CustomerReviews as List<ProductReviewDto>;
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+}
+
+@section Styles{
+    <link rel="stylesheet" type="text/css" href="~/others/css/rating.css" />
+}
+
+    <!-- customer review - start ================================================== -->
+    <section class="account_section section_space">
+        <div class="container">
+            <div class="row">
+                <div class="col col-lg-3">
+                    <partial name="_CustomerAccountTab" />
+                </div>
+
+                <div class="col col-lg-9">
+                    <div class="account_content_area">
+                        <h3>My Reviews</h3>
+                        <ul class="content_layout ul_li_block">
+                            <li>
+                                <h4><strong>Your Review</strong></h4>
+                            </li>
+                            <li>
+                                <div>
+                                @if (customerReviews != null && customerReviews.Any())
+                                {
+                                    <div class="list-group">
+                                        @foreach (var item in customerReviews)
+                                        {
+                                            <a href="/shop/productdetails/@item.ProductId" class="list-group-item list-group-item-action">
+                                                <div>
+                                                    <div class="text-dark" style="line-height: 1rem;"><span class="fw-bold">Product: </span>@item.ProductName</div>
+                                                    <div class="text-dark" style="line-height: 1rem;">
+                                                        <span class="fw-bold">Rating: </span>
+                                                        <div class="item_review d-inline-block">
+                                                            <ul class="rating_star ul_li">
+                                                                @{
+                                                                    var rateSummary = item.Rating;
+                                                                    for (var i = 0; i < 5; i++)
+                                                                    {
+                                                                        if (rateSummary > 0)
+                                                                        {
+                                                                            <li><i class="fas fa-star"></i></li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li><i class="far fa-star"></i></li>
+                                                                        }
+                                                                        rateSummary--;
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-dark" style="line-height: 1rem;"><span class="fw-bold">Reviewed On: </span>@(String.Format("{0:MMM dd, yyy}", item.DateCommented))</div>
+                                                    <div class="text-dark" style="line-height: 1rem;"><span class="fw-bold">Comment: </span>@item.Comment</div>
+                                                </div>
+                                            </a>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center">
+                                        <h5>No result found.</h5>
+                                    </div>
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- customer review - end ================================================== -->
+@section Scripts{
+    <script src="~/others/js/customer-account.js"></script>
+    <script src="~/others/js/rating.js"></script>
+}

@@ -1,0 +1,494 @@
+﻿@model PaginatedList<ProductShocaseDto>
+@{
+    ViewData["Title"] = ViewBag.SelectedCategory;
+    Layout = LayoutPage.ShopLayout;
+    var sizeFilter = ViewBag.AvailableSize as IEnumerable<SizeDto>;
+    var colorFilter = ViewBag.AvailableColor as IEnumerable<ColorDto>;
+    var categoryFilter = ViewBag.AvailableCategory as IEnumerable<CategoryDto>;
+    IEnumerable<ProductShocaseDto> productItemList = Model.Items;
+    GeneralConfigurationDto conGen = JsonSerializer.Deserialize<GeneralConfigurationDto>(K["GeneralConfiguration"]);
+}
+
+@section Styles{
+    <link href="~/css/combined-checkbox.css" rel="stylesheet" />
+    <link href="~/others/css/dropdown-select.css" rel="stylesheet" />
+    <link href="~/others/css/product-quickview.css" rel="stylesheet" />
+    <style>
+        .shop .card img {
+            height: 230px;
+            object-fit: cover;
+        }
+
+        .item-title a {
+            color: #353535
+        }
+
+        .product-varient-filter .product-varient-filter-header {
+            font-weight: bold;
+        }
+
+        .filter-summary-filter ul li label {
+            /*position: relative;
+                                background-color: #fff;
+                                text-transform: capitalize;
+                                color: #3e4152;
+                                cursor: pointer;
+                                font-size: 12px;
+                                padding: 3px 10px;
+                                -webkit-transition: all .2s ease-out;
+                                transition: all .2s ease-out;
+                                border-radius: 20px;
+                                border: 1px solid #d4d5d9;*/
+        }
+
+            .filter-summary-filter ul li label:hover {
+                border: 1px solid #94969f;
+            }
+
+        .filter-summary-filter label {
+            padding: 3px 8px;
+            margin-left: 3px;
+            border: 2px solid #e1e1e1;
+            color: #636363;
+            border-radius: 50px;
+            cursor: pointer
+        }
+
+            .filter-summary-filter label:hover {
+                border: 2px solid #8f8f8f;
+            }
+
+        .product-pic {
+            position: relative;
+        }
+
+        .product_variable_option_section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: #ffffff;
+            width: 100%;
+            padding: 12px 0px 0px;
+            display: none;
+        }
+
+        /*.grid:hover + .product_variable_option_section {
+                                display: block;
+                            }*/
+
+        .selected_filter_item label {
+            display: inline-block;
+            padding: 2px 14px;
+            color: #111;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            margin: 0 5px 5px 0;
+            font-size: 13px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+            .selected_filter_item label:hover {
+                background: #3749BB;
+                border: 1px solid #3749BB;
+                color: #fff;
+            }
+    </style>
+    <style>
+        .product-item-color-palette {
+            height: 17px;
+            width: 17px;
+            box-shadow: 0 2px 4px #808080;
+            border-radius: 50%;
+            margin-left: 6px;
+        }
+
+        .product-filter-color-palette {
+            height: 17px;
+            width: 17px;
+            box-shadow: 0 0px 2px #808080;
+            margin-right: 6px;
+        }
+
+        .product-filter-color-palette-border {
+            height: 20px;
+            width: 20px;
+            margin-right: 5px;
+            box-shadow: 0 0 3px #808080;
+            border: 2px solid #fff;
+            cursor: pointer;
+        }
+    </style>
+}
+
+    <div>
+        <vc:category-bread-cumb option="@(new BreadCumbOptionsVM { Slug = ViewBag.SelectedCategorySlug } )" />
+    </div>
+
+    <!-- product_section - start
+                ================================================== -->
+    <section class="product_section section_space">
+    @if (productItemList != null && productItemList.Count() > 0)
+    {
+        <h2 class="hidden">Product sidebar</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <aside class="sidebar_section p-0 mt-0">
+                        @if (categoryFilter != null && categoryFilter.Count() != 0)
+                        {
+                            <div class="sb_widget sb_category">
+                                <h3 class="sb_widget_title">Categories</h3>
+                                <ul class="sb_category_list ul_li_block">
+                                    @foreach (var item in categoryFilter)
+                                    {
+                                        <li>
+                                            <a href="/shop/@item.Slug">@item.Name</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+
+                        <div class="sb_widget mb-2">
+                            <h3 class="sb_widget_title">Your Filter</h3>
+                            <div class="filter_sidebar">
+
+                                @if (colorFilter != null && colorFilter.Count() != 0)
+                                {
+                                    <div class="fs_widget" id="colorFilter">
+                                        <h3 class="fs_widget_title">Color</h3>
+                                        <form action="#">
+                                            <ul class="fs_brand_list ul_li_block">
+                                                @foreach (var item in colorFilter)
+                                                {
+                                                    <li style="cursor: pointer">
+                                                        <div class="checkbox_item color-filter-item">
+
+                                                            <label for="colorFilter@(item.Id)" color-value="@item.Id" class="d-flex align-items-center click_item">
+                                                                <input type="checkbox" id="colorFilter@(item.Id)" @(ViewBag.SelectedColor == item.Id.ToString() ? "checked" : "")>
+                                                                <div class="d-inline-block product-filter-color-palette" style="background: @item.HexCode;"></div>
+                                                                @item.Name
+                                                            </label>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </form>
+                                    </div>
+
+                                }
+                                @if (sizeFilter != null && sizeFilter.Count() != 0)
+                                {
+                                    <div class="fs_widget" id="sizeFilter">
+                                        <h3 class="fs_widget_title">Size</h3>
+                                        <form action="#">
+                                            <ul class="fs_brand_list ul_li_block">
+                                                @foreach (var item in sizeFilter)
+                                                {
+                                                    <li onclick="filterClick()">
+                                                        <div class="checkbox_item size-filter-item">
+
+                                                            <label for="sizeFilter@(item.Id)" size-value="@item.Id">
+                                                                <input type="checkbox" id="sizeFilter@(item.Id)" value="@item.Name" @(ViewBag.SelectedSize == item.Id.ToString() ? "checked" : "")>
+                                                                @item.Name
+                                                            </label>
+                                                        </div>
+                                                    </li>
+                                                }
+
+                                            </ul>
+                                        </form>
+                                    </div>
+
+                                }
+
+                                @*<div class="fs_widget">
+                            <h3 class="fs_widget_title">Price</h3>
+                            <form action="#">
+                            <div class="price-range-area clearfix">
+                            <div class="price-text d-flex align-items-center">
+                            <span>Range:</span>
+                            <input type="text" id="amount" readonly="">
+                            </div>
+                            <div id="slider-range" class="slider-range"></div>
+                            </div>
+                            </form>
+                            </div>*@
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                <div class="col-lg-9">
+                    @if (ViewBag.SelectedSize != null || ViewBag.SelectedColor != null)
+                    {
+                        <div class="mb-2 filter_topbar">
+                            <div class="selected_filter_item">
+                                @if (ViewBag.SelectedSize != null)
+                                {
+                                    <div class="size-filter-item d-inline-block">
+                                        <label size-value="0">@ViewBag.SelectedSizeName <i class="fa fa-times"></i></label>
+                                    </div>
+
+                                }
+                                @if (ViewBag.SelectedColor != null)
+                                {
+                                    <div class="color-filter-item d-inline-block">
+                                        <label color-value="0">@ViewBag.SelectedColorName <i class="fa fa-times"></i></label>
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+                    }
+
+                    <div>
+                        @Context.Request.Query["value"]
+                    </div>
+                    <div class="filter_topbar">
+                        <div class="row align-items-center">
+                            <div class="col col-md-4">
+                                <div>
+                                    <div class="select_option float-start">
+                                        <div class="selectBox">
+                                            <div class="selectBox__value">Sort by</div>
+                                            <div class="dropdown-menu">
+                                                <a asp-action="ByCategory" class="dropdown-item" asp-route-page="@Context.Request.Query["page"]"
+                                               asp-route-sortColumn="Name"
+                                               asp-route-sortOrder="Asc">A to Z</a>
+                                                <a asp-action="ByCategory" class="dropdown-item" asp-route-page="@Context.Request.Query["page"]"
+                                               asp-route-sortColumn="Name"
+                                               asp-route-sortOrder="Desc">Z to A</a>
+                                                <a asp-action="ByCategory" class="dropdown-item" asp-route-page="@Context.Request.Query["page"]"
+                                               asp-route-sortColumn="MinPrice"
+                                               asp-route-sortOrder="Asc">Price: low to high</a>
+
+                                                <a asp-action="ByCategory" class="dropdown-item" asp-route-page="@Context.Request.Query["page"]"
+                                               asp-route-sortColumn="MinPrice"
+                                               asp-route-sortOrder="Desc">Price: high to low</a>
+                                                <a asp-action="ByCategory" class="dropdown-item" asp-route-page="@Context.Request.Query["page"]">Default</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col col-md-4">
+                                <div class="clearfix">
+                                </div>
+                            </div>
+
+                            <div class="col col-md-4">
+                                @*<div class="result_text">Showing 1-12 of 30 relults</div>*@
+                                <div class="result_text">Showing @Model.StartCount-@Model.EndCount of @(Model.TotalCount) relults</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel">
+                            <div class="shop-product-area shop-product-area-col">
+                                <div class="product-area shop-grid-product-area clearfix">
+
+                                    @foreach (var item in productItemList)
+                                    {
+
+                                        <div class="grid">
+                                            <div class="product-pic">
+                                                <img src="@(item.ProductImagePreview != null ? "/" + item.ProductImagePreview : "/assets/images/no-image.png")" alt="">
+                                                <div class="product_variable_option_section">
+                                                    @if (item.AvailableColorVarient != null && item.AvailableColorVarient.Count() != 0)
+                                                    {
+                                                        <div class="d-flex align-items-center">
+                                                            <span>Color:</span>
+                                                            @foreach (var color in item.AvailableColorVarient.DistinctBy(o => o.Name).ToList())
+                                                            {
+                                                                <div class="d-inline-block product-item-color-palette" style="background: @color.HexCode;"></div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    @if (item.AvailableSizesVarient != null && item.AvailableSizesVarient.Count() != 0)
+                                                    {
+                                                        <div class="d-flex align-items-center">
+                                                            <span style="margin-right: 14px;">Size:</span>
+                                                            @foreach (var size in item.AvailableSizesVarient.DistinctBy(o => o.Name).ToList())
+                                                            {
+                                                                <span>@(size.Name + (size.Equals(item.AvailableSizesVarient.Last()) ? "" : ", "))</span>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="actions">
+                                                    <ul>
+                                                        @*<li>
+                                                <a href="#">
+                                                <svg role="img" xmlns="http://www.w3.org/2000/svg" width="48px" height="48px" viewbox="0 0 24 24" stroke="#2329D6" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#2329D6">
+                                                <title>Favourite</title>
+                                                <path d="M12,21 L10.55,19.7051771 C5.4,15.1242507 2,12.1029973 2,8.39509537 C2,5.37384196 4.42,3 7.5,3 C9.24,3 10.91,3.79455041 12,5.05013624 C13.09,3.79455041 14.76,3 16.5,3 C19.58,3 22,5.37384196 22,8.39509537 C22,12.1029973 18.6,15.1242507 13.45,19.7149864 L12,21 Z"></path>
+                                                </svg>
+                                                </a>
+                                                </li>*@
+                                                        @*<li>
+                                                <a class="quickview_btn" data-bs-toggle="modal" href="#quickview_popup" role="button" tabindex="0">
+                                                <svg width="48px" height="48px" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#2329D6" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#2329D6">
+                                                <title>Visible (eye)</title>
+                                                <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                                </a>
+                                                </li>*@
+                                                        <li>
+                                                            <a class="quickview_btn" onclick="ProductQuickView(@item.ProductId)" href="javascript:void(0)" role="button" tabindex="0">
+                                                                <svg width="48px" height="48px" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#2329D6" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#2329D6">
+                                                                    <title>Visible (eye)</title>
+                                                                    <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
+                                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                                </svg>
+                                                            </a>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="details position-relative">
+                                                <h4><a asp-action="ProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId" class="text-two-lines">@item.Name</a></h4>
+                                                <span class="price">
+                                                    <ins>
+                                                        <span>
+                                                            <bdi class="@(conGen.CurrencyPosition == CurrencyPosition.End ? "currency-swap": "")"> <span>@conGen.CurrencySymbol</span><span>@item.Price</span> </bdi>
+                                                        </span>
+                                                    </ins>
+                                                </span>
+                                                <div class="add-cart-area">
+                                                    <a class="btn add-to-cart" asp-action="ProductDetails" asp-controller="Shop" asp-route-id="@item.ProductId">Shop Now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="pagination_wrap">
+                                @{
+                                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                                }
+                                <ul class="pagination_nav">
+
+                                    @if (Model.HasPreviousPage)
+                                    {
+                                        <li class="prev_btn">
+                                            <a asp-action="ByCategory" asp-route-page="@(Model.PageIndex - 1)"><i class="fal fa-angle-left"></i></a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="ByCategory" asp-route-page="@(Model.PageIndex - 1)" asp-route-sortColumn="@Context.Request.Query["sortColumn"]" asp-route-sortOrder="@Context.Request.Query["sortOrder"]">@(Model.PageIndex - 1)</a>
+                                        </li>
+                                    }
+
+                                    <li class="active"><a href="#!">@Model.PageIndex</a></li>
+                                    @if (Model.HasNextPage)
+                                    {
+                                        <li>
+                                            <a asp-action="ByCategory" asp-route-page="@(Model.PageIndex + 1)" asp-route-sortColumn="@Context.Request.Query["sortColumn"]" asp-route-sortOrder="@Context.Request.Query["sortOrder"]">@(Model.PageIndex + 1)</a>
+                                        </li>
+                                        <li class="next_btn">
+                                            <a asp-action="ByCategory" asp-route-page="@(Model.PageIndex + 1)"><i class="fal fa-angle-right"></i></a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container">
+            <div class="empty_cart_content text-center">
+                <span class="cart_icon">
+                    <i class="fas fa-shopping-basket"></i>
+                </span>
+                <h3>No items available in this category</h3>
+                <a class="btn btn_secondary" asp-controller="Shop" asp-action="Index"><i class="fas fa-luggage-cart"></i>Continue shopping</a>
+            </div>
+        </div>
+
+    }
+
+</section>
+<!-- product_section - end
+================================================== -->
+@section scripts{
+    <script src="~/others/js/dropdown-select.js"></script>
+    <script src="~/others/js/product-quickview.js"></script>
+
+    <script>
+        function ProductQuickView(id) {
+            $.ajax({
+                type: "GET",
+                url: "/quickview/" + id,
+                success: function (data) {
+                    document.getElementById("quickview").innerHTML = data;
+                    $('#quickview_popup').modal('show');
+                    LoadQuickViewScript(id);
+                }
+            });
+        }
+    </script>
+    <script>
+        //Sortby active
+        $('.selectBox .dropdown-menu a').each(function () {
+            var hrefurl = $(this).attr("href");
+            var pathurl = window.location.pathname + window.location.search;
+            //console.log(hrefurl, pathurl);
+            if (hrefurl.toLowerCase() == pathurl.toLowerCase()) {
+                $(this).addClass('active');
+                $('.selectBox__value').html($('.dropdown-item.active').text());
+                //$(this).parentsUntil(".nav-sidebar > .nav-treeview").addClass('menu-open').prev('a').addClass('active');
+            }
+        });
+    </script>
+    <script>
+        $(".size-filter-item label").click(function () {
+            var size = $(this).attr('size-value');
+            if ('URLSearchParams' in window) {
+                var searchParams = new URLSearchParams(window.location.search);
+                searchParams.set("size", size);
+                if (size == 0) {
+                    searchParams.delete("size");
+                }
+                window.location.search = searchParams.toString();
+            }
+        });
+
+        $(".color-filter-item label").click(function () {
+            var color = $(this).attr('color-value');
+            if ('URLSearchParams' in window) {
+                var searchParams = new URLSearchParams(window.location.search);
+                searchParams.set("color", color);
+                if (color == 0) {
+                    searchParams.delete("color");
+                }
+                window.location.search = searchParams.toString();
+            }
+        });
+
+        $(".grid").hover(function () {
+            $(this).closest('div').find('.product_variable_option_section').show();
+        }, function () {
+            $(this).closest('div').find('.product_variable_option_section').hide();
+        });
+
+
+    </script>
+
+}
